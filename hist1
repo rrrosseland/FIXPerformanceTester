@@ -1,0 +1,1000 @@
+    4  ./workingneworder.sh 
+    5  cd logs/
+    6  ls -ltr
+    7  mkdir bashgames
+    8  cd bashgames/
+    9  pwd
+   10  cd ..
+   11  ~~
+   12  cd ..
+   13  cd home
+   14  ls
+   15  cd ec2-user/
+   16  cd qfj-perf/
+   17  history
+   18  ./workingneworder.sh
+   19  mvn -q -DskipTests -P single exec:java -Dexec.mainClass=perf.LoadInitiator -Dexec.args="configs/initiator_oe.cfg SUBMIT_ONLY \
+   20  totalrps=1 durationsec=1 yesno=NO price=52.00 symbol=BTCUSD accountname=TestAccount orderquantity=100"
+   21  mvn -q -DskipTests -P single exec:java -Dexec.mainClass=perf.LoadInitiator -Dexec.args="configs/initiator_oe.cfg SUBMIT_ONLY
+   22  totalrps=1 durationsec=1 yesno=YES price=039 symbol= accountname=Ronaldo orderquantity=100"
+   23  mvn -q -DskipTests -P single exec:java -Dexec.mainClass=perf.LoadInitiator -Dexec.args="configs/initiator_oe.cfg SUBMIT_ONLY
+   24  totalrps=1 durationsec=1 yesno=YES price=0.39 symbol= accountname=Rapman orderquantity=100"
+   25  mvn -q -DskipTests -P single exec:java -Dexec.mainClass=perf.LoadInitiator -Dexec.args="configs/initiator_oe.cfg SUBMIT_ONLY
+   26  totalrps=1 durationsec=1 yesno=YES price=0.39 symbol= accountname=Rman orderquantity=100"
+   27  mvn -q -DskipTests -P single exec:java -Dexec.mainClass=perf.LoadInitiator -Dexec.args="configs/initiator_oe.cfg SUBMIT_ONLY
+   28  totalrps=10 durationsec=1 yesno=YES price=0.39 symbol= accountname=Rman orderquantity=100"
+   29  mvn -q -DskipTests -P single exec:java -Dexec.mainClass=perf.LoadInitiator -Dexec.args="configs/initiator_oe.cfg SUBMIT_ONLY
+   30  totalrps=1 durationsec=1 yesno=YES price=0.39 symbol= accountname=Rman orderquantity=100"
+   31  mvn -q -DskipTests -P single exec:java -Dexec.mainClass=perf.LoadInitiator -Dexec.args="configs/initiator_oe.cfg SUBMIT_ONLY
+   32  totalrps=1 durationsec=1 yesno=YES price=0.40 symbol=CBBTC_123125_142500 accountname=Robtest orderquantity=100"
+   33  mvn -q -DskipTests -P single exec:java -Dexec.mainClass=perf.LoadInitiator -Dexec.args="configs/initiator_oe.cfg SUBMIT_ONLY
+   34  totalrps=1 durationsec=1 yesno=YES price=0.40 symbol=CBBTC_123125_1425 accountname=Robtest orderquantity=100"
+   35  mvn -q -DskipTests -P single exec:java -Dexec.mainClass=perf.LoadInitiator -Dexec.args="configs/initiator_oe.cfg SUBMIT_ONLY
+   36  totalrps=1 durationsec=1 yesno=YES price=1.40 symbol=CBBTC_123125_142500 accountname=Robtest orderquantity=100"
+   37  tail -n 50 logs/oe/FIXT.1.1-4C001-ForecastEx.messages.log | sed 's/\o01/|/g'
+   38  tail -n 50 logs/oe/FIXT.1.1-4C001-ForecastEx.events.log | sed 's/\o01/|/g'
+   39  tail -n 50 logs/oe/FIXT.1.1-4C001-ForecastEx.event.log | sed 's/\o01/|/g'
+   40  date
+   41  mvn -q -DskipTests -P single exec:java -Dexec.mainClass=perf.LoadInitiator -Dexec.args="configs/initiator_oe.cfg SUBMIT_ONLY
+   42  totalrps=1 durationsec=1 yesno=YES price=1.40 symbol=CBBTC_123125_142500 accountname=Robtest orderquantity=100"
+   43  mvn -q -DskipTests -P single exec:java -Dexec.mainClass=perf.LoadInitiator2 -Dexec.args="configs/initiator_oe.cfg SUBMIT_ONLY \
+   44  totalrps=10 durationsec=10 yesno=NO price=52.00 symbol=BTCUSD accountname=TestAccount orderquantity=100"
+   45  ls -l
+   46  ls -ltr
+   47  cd target 
+   48  ls -ltr
+   49  qf
+   50  find . -name *.java
+   51  history
+   52  vi newrunone.sh
+   53  chmod +x newrunone.sh
+   54  ./newrunone.sh
+   55  vi newrunone.sh
+   56  ./newrunone.sh
+   57  mvn clean package
+   58              //quickfix.LogFactory fileLog = new quickfix.FileLogFactory(settings);
+   59              
+   60  mvn clean package
+   61  sed -i 's/\xc2\xa0/ /g' /home/ec2-user/qfj-perf/src/main/java/perf/LoadInitiator.rp.java
+   62  mvn clean package
+   63  sed -i 's/\xc2\xa0/ /g' /home/ec2-user/qfj-perf/src/main/java/perf/LoadInitiator.java
+   64  sed -i 's/\xc2\xa0/ /g' /home/ec2-user/qfj-perf/src/main/java/perf/LoadInitiator2.java
+   65  ls -ltr /home/ec2-user/qfj-perf/src/main/java/perf/
+   66  sed -i 's/\xc2\xa0/ /g' /home/ec2-user/qfj-perf/src/main/java/perf/LoadInitiator.java
+   67  mvn clean package
+   68  nl -ba src/main/java/perf/LoadInitiator.java | sed -n '540,560p'
+   69  mvn -q -DskipTests clean compile
+   70  rm src/main/java/perf/LoadInitiator.rp.java
+   71  mvn -q -DskipTests clean compile
+   72  mvn clean package
+   73  mvn clean package > deleterobversion.txt
+   74  cat deleterobversion.txt 
+   75  mvn -q -DskipTests clean compile
+   76  mvn clean package > deleterobversion.txt
+   77  mvn -q -DskipTests clean compile
+   78  grep -n "toApp" -n src/main/java/perf/LoadInitiator.java
+   79  grep -n "executeCancelSubprocess" src/main/java/perf/LoadInitiator.java
+   80  grep -n "secondaryActionLatch" src/main/java/perf/LoadInitiator.java
+   81  grep -n "CustOrderCapacity" src/main/java/perf/CancelInitiator.java
+   82  grep -n "OrderCapacity"    src/main/java/perf/CancelInitiator.java
+   83  mvn -q -DskipTests clean compile
+   84  src/main/java/perf/CancelInitiator.java:100
+   85      cxl.set(new CustOrderCapacity(CustOrderCapacity.INDIVIDUAL)); // 582
+   86  sed -i '100d' src/main/java/perf/CancelInitiator.java
+   87  mvn -q -DskipTests clean compile
+   88  nl -ba src/main/java/perf/LoadInitiator.java | sed -n '300,420p'
+   89  mvn -q -DskipTests clean compile
+   90  grep -n "try" src/main/java/perf/LoadInitiator.java | sed -n '1,200p'
+   91  grep -n "catch (SessionNotFound" src/main/java/perf/LoadInitiator.java
+   92  grep -n "try" src/main/java/perf/LoadInitiator.java | sed -n '1,200p'
+   93  mvn -q -DskipTests clean compile
+   94  history
+   95  mvn -q -DskipTests clean compile
+   96  mvn -q -DskipTests clean package
+   97  ls -ltr target/
+   98  java -jar target/qfj-perf-1.0.0.jar configs/initiator_oe.cfg SUBMIT_ONLY price=0.52 symbol=CBBTC_123125_142500
+   99  histroy | grep -jar
+  100  history | grep -jar
+  101  history | grep "java -jar"
+  102  java -jar target/qfj-perf-1.0.0.jar configs/initiator_oe.cfg SUBMIT_ONLY price=0.52 symbol=CBBTC_123125_142500 accountname=Tree orderquantity=100"
+  103  java -jar target/qfj-perf-1.0.0.jar configs/initiator_oe.cfg SUBMIT_ONLY price=0.52 symbol=CBBTC_123125_142500 accountname=Tree orderquantity=100
+  104  find . -name LoadInitiatorSingle
+  105  java -jar target/LoadInitiatorSingle.jar configs/initiator_oe.cfg SUBMIT_ONLY price=0.52 symbol=CBBTC_123125_142500 accountname=Tree orderquantity=100
+  106  tail -n 50 logs/oe/FIXT.1.1-4C001-ForecastEx.messages.log | sed 's/\o01/|/g'
+  107  java -jar target/LoadInitiatorSingle.jar configs/initiator_oe.cfg SUBMIT_ONLY price=0.52 symbol=CBBTC_123125_142500 accountname=Tree orderquantity=100
+  108  java -jar target/LoadInitiatorSingle.jar configs/initiator_oe.cfg SUBMIT_ONLY price=0.52 symbol=CBBTC_123125_142500 accountname=Tree orderquantity=100 yesno=YES
+  109  java -jar target/LoadInitiatorSingle.jar configs/initiator_oe.cfg SUBMIT_ONLY totalrps=1 durationsec=1 price=0.52 symbol=CBBTC_123125_142500 accountname=Tree orderquantity=100 yesno=YES
+  110  java -jar target/LoadInitiatorSingle.jar configs/initiator_oe.cfg SUBMIT_ONLY totalrps=1 durationsec=1 yesno=YES price=0.38 symbol=CBBTC_123125_142500 accountname=Tree orderquantity=1111
+  111  java -jar target/LoadInitiatorSingle.jar configs/initiator_oe.cfg SUBMIT_ONLY totalrps=1 durationsec=1 yesno=NOYESrice=0.6337ymbol=CBBTC_123125_142500 accountname=Tree orderquantity=1java -jar target/LoadInitiatorSingle.jar configs/initiator_oe.cfg SUBMIT_ONLY totalrps=1 durationsec=1 yesno=YES price=0.37 symbol=CBBTC_123125_142500
+  112  java -jar target/LoadInitiatorSingle.jar configs/initiator_oe.cfg SUBMIT_ONLY totalrps=1 durationsec=1 yesno=YES price=0.37 symbol=} catch (Throwable t) {
+  113                  System.err.println("FATAL: " + t.getClass().getName() + ": " + t.getMessage());
+  114                  t.printStackTrace(System.err);
+  115                  return;
+  116              }  finally {
+  117                  if (app != null) app.shutdown(); // Shutdown YOUR scheduler first
+  118                  
+  119                  if (initiator != null) {
+  120                      System.out.println("[FINAL STOP] Initiating shutdown after transaction.");
+  121                      initiator.stop(); 
+  122                      
+  123                      // 🔥 CRITICAL: Wait for QFJ threads to terminate 🔥
+  124                      try { 
+  125                          Thread.sleep(500); // Wait 500ms for QFJ message processor to stop
+  126                      } catch (InterruptedException ie) { 
+  127                          Thread.currentThread().interrupt(); 
+  128                      }
+  129                  }
+  130              } accountname=Tree orderquantity=1
+  131  mvn -q -DskipTests clean compile
+  132  tail
+  133  mvn -q -DskipTests clean compile
+  134  mvn clean package
+  135  java -jar target/qfj-perf-1.0.0-shaded.jar configs/initiator_oe.cfg SUBMIT_ONLY totalrps=1 durationsec=1 price=0.37 symbol=MNYCG_110425_Mamdani accountname=Tree orderquantity=1 yesno=YES
+  136  ls -ltr target/
+  137  java -jar target/LoadInitiatorSingle.jar configs/initiator_oe.cfg SUBMIT_ONLY totalrps=1 durationsec=1 price=0.37 symbol=MNYCG_110425_Mamdani accountname=Tree orderquantity=1 yesno=YES
+  138  java -jar target/LoadInitiatorSingle.jar configs/initiator_oe.cfg SUBMIT_ONLY totalrps=1 durationsec=1 price=0.37 symbol=CBBTC_123125_132500 accountname=Tree orderquantity=1 yesno=YES
+  139  tail -n 50 logs/oe/FIXT.1.1-4C001-ForecastEx.messages.log | sed 's/\o01/|/g'
+  140  java -jar target/LoadInitiatorSingle.jar configs/initiator_oe.cfg SUBMIT_ONLY totalrps=1 durationsec=1 price=0. symbol=CBBTC_123125_132500 accountname=Tree orderquantity=1 yesno=YES
+  141  java -jar target/LoadInitiatorSingle.jar configs/initiator_oe.cfg SUBMIT_ONLY totalrps=1 durationsec=1 price=0.47 symbol=MNYCG_110425_Mamdani accountname=Tree orderquantity=1 yesno=YES
+  142  java -jar target/LoadInitiatorSingle.jar configs/initiator_oe.cfg SUBMIT_ONLY totalrps=1 durationsec=1 price=0.48 symbol=MNYCG_110425_Mamdani accountname=Tree orderquantity=1 yesno=YES
+  143  java -jar target/LoadInitiatorSingle.jar configs/initiator_oe.cfg SUBMIT_ONLY totalrps=1 durationsec=1 price=0.49 symbol=MNYCG_110425_Mamdani accountname=Tree orderquantity=1 yesno=YES
+  144  qf
+  145  ls -ltr target/
+  146  mvn -q -DskipTests clean compile
+  147  mvn clean compile
+  148  mvn clean package
+  149  ls -ltr target/
+  150  ls
+  151  cd aws
+  152  ls
+  153  cd dist
+  154  ls
+  155  cd..
+  156  qf
+  157  aws s3 ls s3://surveilence-uat/
+  158  aws s3 ls s3://surveillance-uat
+  159  aws s3 ls s3://surveillance-uat/
+  160  ls
+  161  ls -ltr
+  162  vi 20251009_orderRepeater.sh
+  163  ./20251009_orderRepeater.sh
+  164  cat 20251009_orderRepeater.sh
+  165  vi 20251009_orderRepeater.sh
+  166  ./20251009_orderRepeater.sh
+  167  vi 20251009_orderRepeater.sh
+  168  ./20251009_orderRepeater.sh
+  169  git status
+  170  git log --since="2024-10-01" --until="2024-10-03" --stat
+  171  git status
+  172  git remote set-url https://github.com/rrrosseland/FIXPerformanceTester
+  173  git remote set-url origin https://github.com/rrrosseland/FIXPerformanceTester
+  174  git fetch origin
+  175  git push -u origin main
+  176  git remote -v
+  177  origin  https://github.com/rrrosseland/FIXPerformanceTester.git
+  178  git push -u origin main
+  179  git remote set-url origin https://github.com/rrosseland-fcx/FIXPerformanceTester.git
+  180  git remote -v
+  181  git branch --show-current
+  182  git branch 
+  183  git add ,
+  184  git add .
+  185  git status
+  186  git commit -m "WIP before merge"
+  187  git fetch origin
+  188  git remote set-url origin https://github.com/rrosseland-fcx/FIXPerformanceTester.git
+  189  git remote -v
+  190  git config --global --unset credential.helper || true
+  191  rm -f ~/.git-credentials
+  192  git credential-cache exit 2>/dev/null || true
+  193  git credential reject <<<'protocol=https
+  194  host=github.com' 2>/dev/null || true
+  195  git push -u origin main
+  196  git remote set-url origin https://github.com/rrrosseland/FIXPerformanceTester.git
+  197  git push -u origin main
+  198  git status
+  199  git add .
+  200  git commit -m :WIP before switching to SSH/push"
+  201  git commit -m "WIP before switching to SSH and push"
+  202  ssh-keygen -t ed25519 -C "rrosseland@4castex.com" -f ~/.ssh/id_ed25519 -N ""
+  203  ssh-add ~/.ssh/id_ed25519
+  204  ssh-agent bash
+  205  ssh-add ~/.ssh/id_ed25519
+  206  ssh-add -l
+  207  chmod 700 ~/.ssh
+  208  chmod 600 ~/.ssh/id_ed25519
+  209  chmod 644 ~/.ssh/id_ed25519.pub
+  210  cat ~/.ssh/id_ed25519.pub
+  211  cat > ~/.ssh/config <<'EOF'
+  212  Host github.com
+  213    HostName github.com
+  214    User git
+  215    IdentityFile ~/.ssh/id_ed25519
+  216    IdentitiesOnly yes
+  217  EOF
+  218  chmod 600 ~/.ssh/config
+  219  cat .ssh/config
+  220  cat /.ssh/config
+  221  cat ~/.ssh/config
+  222  git remote set-url origin git@github.com:ForecastEx/FIXPerformanceTester.git
+  223  git remote -v
+  224  ssh -T git@github.com
+  225  git checkout main
+  226  git merge FIX_cancel_initiator
+  227  git checkout --theirs src/main/java/perf/LoadInitiator.java
+  228  git add src/main/java/perf/LoadInitiator.java
+  229  git commit -m "Merge FIX_cancel_initiator into main (prefer branch version of LoadInitiator.java)"
+  230  git push
+  231  git status
+  232  git diff --name-only --diff-filter=U
+  233  git mergetool
+  234  git checkout main
+  235  git fetch origin
+  236  git log --oneline --left-right --graph main...FIX_cancel_initiator
+  237  git diff --stat main..FIX_cancel_initiator
+  238  git merge FIX_cancel_initiator
+  239  git checkout --theirs src/main/java/perf/LoadInitiator.java
+  240  git add src/main/java/perf/LoadInitiator.java
+  241  git commit -m "Merge FIX_cancel_initiator into main (prefer branch version of LoadInitiator.java)"
+  242  git push -u origin main
+  243  git fetch origin
+  244  git diff --stat origin/main@{1}..origin/main > boss-summary.txt
+  245  git log origin/main@{1}..origin/main --name-status --date=short   --pretty="format:%h %ad <%an> %s" > boss-details.txt
+  246  git reset --hard FIX_cancel_initiator
+  247  git push -u origin main --force-with-lease
+  248  ls -ltr 
+  249  git add .
+  250  git commit -m "Showing Rob"
+  251  git push
+  252  git add .
+  253  git push
+  254  git commit -m "Showing Rob 2"
+  255  telnet 18.232.15.202 13001
+  256  qf
+  257  ls
+  258  mkdir pyrob
+  259  cd pyrob
+  260  ls
+  261  pip install quickfix
+  262  cd..
+  263  ls
+  264  cd ..
+  265  ls
+  266  cd ..
+  267  ls
+  268  mkdir RobStuff
+  269  ls
+  270  qf
+  271  ls
+  272  mv backupjavasperf ..
+  273  cd ..
+  274  ls
+  275  mv backupjavasperf RobStuff
+  276  ls RobStuff/
+  277  qf
+  278  ls
+  279  cd ..
+  280  ls
+  281  qf
+  282  ls
+  283  rmdir pyrob
+  284  ls
+  285  ls releases/
+  286  ls
+  287  cd ..
+  288  ls
+  289  mkdir BashScriptsMain
+  290  ls
+  291  qf
+  292  ls *.sh
+  293  ls
+  294  mv 20251002_stackYesBids.sh ..
+  295  mv 20251002_stackYesNnoBids.sh ..
+  296  mv 20251009_orderRepeater.sh ..
+  297  mv  layeryesno.sh ..
+  298  mv spreadtheyesbids2oct.sh ..
+  299  ls
+  300  cd ..
+  301  ls
+  302  mv *.sh BashScriptsMain
+  303  pwd
+  304  cd pythonRP
+  305  ls
+  306  pip install quickfix
+  307  python --version\
+  308  python --version
+  309  python3 --version
+  310  cat /etc/os-release
+  311  sudo dnf groupinstall -y "Development Tools"
+  312  sudo dnf install -y python3-devel swig
+  313  python3 -m venv ~/venvs/fix
+  314  source ~/venvs/fix/bin/activate
+  315  python -m pip install --upgrade pip
+  316  python -m pip install quickfix==1.15.1
+  317  ls
+  318  cd ..
+  319  ls
+  320  ls -ltr 
+  321  *
+  322  ls -ltr *
+  323  ls -ltr */*
+  324  ls -ltr */*/*
+  325  ls -ltr */*/* | grep Oct
+  326  pwd
+  327  cd ..
+  328  ls
+  329  cd ec2-user/
+  330  ls
+  331  ls -ltr
+  332  cd fix-perf/
+  333  ls
+  334  cd ..
+  335  cd robbackup/
+  336  ls
+  337  cd ..
+  338  rmdir robbackup
+  339  ls
+  340  cd BashScriptsMain
+  341  ls
+  342  ./20251009_orderRepeater.sh
+  343  pwd
+  344  qf
+  345  ls
+  346  pwd
+  347  cd ..
+  348  cd BashScriptsMain/
+  349  vi ./20251009_orderRepeater.sh
+  350  ./20251009_orderRepeater.sh
+  351  history
+  352  qf
+  353  git status
+  354  git diff
+  355  git add .
+  356  git commit -m "step 1 of removal of all references to cancel and replace in LoadInitiator"
+  357  git status
+  358  git diff
+  359  git add .
+  360  git commit -m "step 2 of removal of all references to cancel and replace in LoadInitiator"
+  361  java perf.LoadInitiator initiator.cfg   price=0.52 symbol=ABC accountname=Roberto orderquantity=100 yesno=YES
+  362  mvn -q -DskipTests clean compile
+  363  mvn -q -DskipTests exec:java   -Dexec.mainClass="perf.LoadInitiator"   -Dexec.args="configs/initiator_oe.cfg price=0.52 symbol=ABC accountname=Roberto orderquantity=100 yesno=YES"
+  364  mvn -q -DskipTests exec:java -Dexec.mainClass="perf.LoadInitiator" -Dexec.args="configs/initiator_oe.cfg price=0.40 symbol=CBBTC_123125_142500 accountname=Roberto orderquantity=1 yesno=YES"
+  365  mvn -q -DskipTests clean compile
+  366  mvn -q -DskipTests exec:java -Dexec.mainClass="perf.LoadInitiator" -Dexec.args="configs/initiator_oe.cfg price=0.40 symbol=CBBTC_123125_142500 accountname=Roberto orderquantity=1 yesno=YES"
+  367  mvn -q -DskipTests exec:java -Dexec.mainClass="perf.LoadInitiator" -Dexec.args="configs/initiator_oe.cfg price=0.40 symbol=CBBTC_123125_142500 accountname=Roberto orderquantity=100 yesno=YES"
+  368  find . -name LoadInitiator.java -print
+  369  test -f pom.xml && test -f src/main/java/perf/LoadInitiator.java && echo "OK: single source tree"
+  370  rm -rf target && mvn -q -DskipTests clean compile
+  371  ls -ltr
+  372  chmod +x run.sh
+  373  ./run.sh "configs/initiator_oe.cfg price=0.40 symbol=CBBTC_123125_142500 accountname=Ronaldo orderquantity=100"
+  374  mvn -q -DskipTests clean compile
+  375  ./run.sh "configs/initiator_oe.cfg price=0.40 symbol=CBBTC_123125_142500 accountname=Ronaldo orderquantity=100"
+  376  mvn -q -DskipTests clean compile
+  377  ./run.sh "configs/initiator_oe.cfg price=0.40 symbol=CBBTC_123125_142500 accountname=Ronaldo orderquantity=100"
+  378  mvn -q -DskipTests clean compile
+  379  ./run.sh "configs/initiator_oe.cfg price=0.40 symbol=CBBTC_123125_142500 accountname=Ronaldo orderquantity=100"
+  380  history
+  381  mvn -q -DskipTests exec:java -Dexec.mainClass="perf.LoadInitiator" -Dexec.args="configs/initiator_oe.cfg price=0.40 symbol=CBBTC_123125_142500 accountname=Roberto orderquantity=100 yesno=YES"
+  382  history
+  383  mvn -q -DskipTests clean compile
+  384  du -sh target || true
+  385  du -sh * | sort -hr | head -n 1
+  386  cd releases
+  387  ls -ltr
+  388  du -sh * | sort -hr 
+  389  cd ../logs/
+  390  ls -l
+  391  rm *.log
+  392  ls -ltr
+  393  rm *.bak*
+  394  ls -ltr
+  395  cd oe
+  396  ls -ltr
+  397  rm *.log
+  398  ls -ltr
+  399  rm temp.txt
+  400  rm logrun.sh
+  401  ls -ltr
+  402  cd..
+  403  cd ..
+  404  ls -lte
+  405  ls -ltr
+  406  ls -ltr bashgames/
+  407  ls -ltr
+  408  rm -rf bashgames | true
+  409  rm -rf bashgames || true
+  410  ls -ltr
+  411  cd ,,
+  412  cd ..
+  413  ls 0ltr
+  414  ls -ltr
+  415  mvn -q -DskipTests exec:java -Dexec.mainClass="perf.LoadInitiator" -Dexec.args="configs/initiator_oe.cfg price=0.40 symbol=CBBTC_123125_142500 accountname=Roberto orderquantity=100 yesno=YES"
+  416  mvn -q -DskipTests clean compile
+  417  mvn -q -DskipTests exec:java -Dexec.mainClass="perf.LoadInitiator" -Dexec.args="configs/initiator_oe.cfg price=0.40 symbol=CBBTC_123125_142500 accountname=Ronaldo orderquantity=100 yesno=YES"
+  418  mvn -q -DskipTests clean compile
+  419  mvn -q -DskipTests exec:java   -Dexec.mainClass="perf.LoadInitiator"   -Dexec.args="configs/initiator_oe.cfg price=0.40 symbol=CBBTC_123125_142500 accountname=Roberto orderquantity=100 yesno=YES"
+  420  mvn -q -DskipTests exec:java   -Dexec.mainClass="perf.LoadInitiator"   -Dexec.args="configs/initiator_oe.cfg price=0.50 symbol=CBBTC_123125_142500 accountname=Ronaldo orderquantity=99 yesno=YES"
+  421  tail -n 20 logs/oe/FIXT.1.1-4C001-ForecastEx.messages.log | sed 's/\o01/|/g'
+  422  mvn -q -DskipTests clean compile
+  423  mvn -q -DskipTests exec:java   -Dexec.mainClass="perf.LoadInitiator"   -Dexec.args="configs/initiator_oe.cfg price=0.40 symbol=CBBTC_123125_142500 accountname=Roberto orderquantity=100 yesno=YES"
+  424  tail -n 20 logs/oe/FIXT.1.1-4C001-ForecastEx.messages.log | sed 's/\o01/|/g'
+  425  mvn -q -DskipTests exec:java   -Dexec.mainClass="perf.LoadInitiator"   -Dexec.args="configs/initiator_oe.cfg price=0.40 symbol=CBBTC_123125_142500 accountname=Roberto orderquantity=100 yesno=YES"
+  426  mvn -q -DskipTests exec:java   -Dexec.mainClass="perf.LoadInitiator"   -Dexec.args="configs/initiator_oe.cfg yesno=YES price=0.40 symbol=CBBTC_123125_142500 accountname=Ronaldo orderquantity=100"
+  427  mvn -q -DskipTests clean compile
+  428  mvn -q -DskipTests exec:java -Dexec.mainClass="perf.LoadInitiator" -Dexec.args="configs/initiator_oe.cfg yesno=YES price=0.40 symbol=CBBTC_123125_142500 accountname=Ronaldo orderquantity=100"
+  429  mvn -q -DskipTests clean compile
+  430  mvn -q -DskipTests exec:java -Dexec.mainClass="perf.LoadInitiator" -Dexec.args="configs/initiator_oe.cfg yesno=YES price=0.40 symbol=CBBTC_123125_142500 accountname=Ronaldo orderquantity=100"
+  431  mvn -q -DskipTests exec:java -Dexec.mainClass="perf.LoadInitiator" -Dexec.args="configs/initiator_oe.cfg yesno=YES price=0.40 symbol=CBBTC_123125_142500 accountname=Ronaldo orderquantity=1"
+  432  mvn -q -DskipTests exec:java -Dexec.mainClass="perf.LoadInitiator" -Dexec.args="configs/initiator_oe.cfg yesno=YES price=0.40 symbol=CBBTC_123125_142500 accountname=Ronaldo orderquantity=2"
+  433  mvn -q -DskipTests exec:java -Dexec.mainClass="perf.LoadInitiator" -Dexec.args="configs/initiator_oe.cfg yesno=YES price=0.40 symbol=CBBTC_123125_142500 accountname=Ronaldo orderquantity=3"
+  434  mvn -q -DskipTests exec:java -Dexec.mainClass="perf.LoadInitiator" -Dexec.args="configs/initiator_oe.cfg yesno=YES price=0.40 symbol=CBBTC_123125_142500 accountname=Ronaldo orderquantity=4"
+  435  cd releases/
+  436  ls -l
+  437  cd ..
+  438  mkdir uncompile
+  439  cp releases/LoadInitiatorSingle.jar uncompile/
+  440  cd uncompile/
+  441  jar tf LoadInitiatorSingle.jar
+  442  cd ..
+  443  ls -l
+  444  mvn -q -DskipTests clean compile
+  445  mvn -q -DskipTests exec:java -Dexec.mainClass="perf.LoadInitiator" -Dexec.args="configs/initiator_oe.cfg yesno=YES price=0.40 symbol=CBBTC_123125_142500 accountname=Ronaldo orderquantity=5"
+  446  qf
+  447  find . -name LoadInitiator.java -print
+  448  cd ..
+  449  ls -l
+  450  mkdir robbackup
+  451  cd robbackup/
+  452  cp ./backupjavasperf/ .
+  453  cd ..
+  454  ls -ltr
+  455  find . -name LoadInitiator.java -print
+  456  cd backupjavaperf
+  457  pwd
+  458  ls -l
+  459  cd ..
+  460  qf
+  461  git add .
+  462  git commit -m "after removing robs back up files"
+  463  git push
+  464  git diff
+  465  ls -l
+  466  curl http://checkip.amazonaws.com
+  467   qf
+  468  ls -ltr
+  469  cd logs
+  470  cd oe
+  471  ls -ltr
+  472  cd ..
+  473  git add .
+  474  git commit -m "update working but requires customer order capacity"
+  475  git push
+  476  qf
+  477  ls -l
+  478  ls
+  479  sudo dnf history
+  480  df -h
+  481  cd BashScriptsMain/
+  482  ls
+  483  vi 20251009_orderRepeater.sh
+  484  ./20251009_orderRepeater.sh
+  485  vi 20251009_orderRepeater.sh
+  486  ./20251009_orderRepeater.sh
+  487  vi 20251009_orderRepeater.sh
+  488  ./20251009_orderRepeater.sh
+  489  vi 20251009_orderRepeater.sh
+  490  ./20251009_orderRepeater.sh
+  491  vi 20251009_orderRepeater.sh
+  492  ./20251009_orderRepeater.sh
+  493  history | grep git
+  494  git status
+  495  qf
+  496  git status
+  497  git add .
+  498  git commit -m "LoadIntitiator2.0 is working and logging"
+  499  git push
+  500  mvn clean compile assembly:single -DskipTests
+  501  mvn clean package -DskipTests   -DdescriptorId=jar-with-dependencies   assembly:single
+  502  ls -ltr target/
+  503  mvn clean package -DskipTests -DdescriptorId=v2 assembly:single
+  504  ls -ltr target/
+  505  rm target/original-LoadInitiatorSingle.jar 
+  506  ls -ltr
+  507  rm original-LoadIntiatorSingle.jar 
+  508  ls -lts
+  509  ls -lts releases/
+  510  qf
+  511  ls -ltr
+  512  ls -ltr target/
+  513  ls -ltr target/generated-sources/
+  514  ls -ltr target/generated-sources/annotations/
+  515  ls -ltr target/maven-status/
+  516  ls -ltr target/maven-status/maven-compiler-plugin/
+  517  ls -ltr target/maven-status/maven-compiler-plugin/compile/
+  518  ls -ltr target/maven-status/maven-compiler-plugin/compile/default-compile/
+  519  cat target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst 
+  520  cat target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst 
+  521  mvn -q -DskipTests exec:java -Dexec.mainClass="perf.LoadInitiator" -Dexec.args="configs/initiator_oe.cfg yesno=YES price=0.40 symbol=CBBTC_123125_142500 accountname=Ronaldo orderquantity=6"
+  522  tail -n 50 logs/oe/FIXT.1.1-4C001-ForecastEx.messages.log | sed 's/\o01/|/g' | grep -E '\|35=D\|'
+  523  mvn -q -DskipTests exec:java -Dexec.mainClass="perf.LoadInitiator" -Dexec.args="configs/initiator_oe.cfg yesno=YES price=0.40 symbol=CBBTC_123125_142500 accountname=Ronaldo orderquantity=6"
+  524  CID=<paste the clOrdId from [SEND] here>
+  525  tail -n 200 logs/oe/FIXT.1.1-4C001-ForecastEx.messages.log   | tr '\001' '|'   | grep -n "$CID" -A1 -B1
+  526  mvn -q -DskipTests exec:java -Dexec.mainClass="perf.LoadInitiator" -Dexec.args="configs/initiator_oe.cfg yesno=YES price=0.40 symbol=CBBTC_123125_142500 accountname=Ronaldo orderquantity=7"
+  527  tail -n 200 logs/oe/FIXT.1.1-4C001-ForecastEx.messages.log   | tr '\001' '|'   | grep -n "$CID" -A1 -B1
+  528  tail -n 20 logs/oe/FIXT.1.1-4C001-ForecastEx.messages.log   | tr '\001' '|'   | grep -n "$CID" -A1 -B1
+  529  mvn -q -DskipTests exec:java -Dexec.mainClass="perf.LoadInitiator" -Dexec.args="configs/initiator_oe.cfg yesno=YES price=0.40 symbol=CBBTC_123125_142500 accountname=Ronaldo orderquantity=8"
+  530  mvn -q -DskipTests exec:java -Dexec.mainClass="perf.LoadInitiator" -Dexec.args="configs/initiator_oe.cfg yesno=YES price=0.40 symbol=CBBTC_123125_142500 accountname=Ronaldo orderquantity=9"
+  531  tail -n 20 logs/oe/FIXT.1.1-4C001-ForecastEx.messages.log   | tr '\001' '|'   | grep -n "$CID" -A1 -B1
+  532  mvn -q -DskipTests exec:java -Dexec.mainClass="perf.LoadInitiator" -Dexec.args="configs/initiator_oe.cfg yesno=YES price=0.40 symbol=CBBTC_123125_142500 accountname=Ronaldo orderquantity=9"
+  533  tail -n 20 logs/oe/FIXT.1.1-4C001-ForecastEx.messages.log   | tr '\001' '|'   | grep -n "$CID" -A1 -B1
+  534  mvn -q -DskipTests exec:java -Dexec.mainClass="perf.LoadInitiator" -Dexec.args="configs/initiator_oe.cfg yesno=YES price=0.40 symbol=CBBTC_123125_142500 accountname=Ronaldo orderquantity=9"
+  535  mvn -q -DskipTests exec:java -Dexec.mainClass="perf.LoadInitiator" -Dexec.args="configs/initiator_oe.cfg yesno=YES price=0.40 symbol=CBBTC_123125_142500 accountname=Ronaldo orderquantity=11"
+  536  mvn -q -DskipTests exec:java -Dexec.mainClass="perf.LoadInitiator" -Dexec.args="configs/initiator_oe.cfg yesno=YES price=0.40 symbol=CBBTC_123125_142500 accountname=Ronaldo orderquantity=12"
+  537  find . -name repeaterScript
+  538  ls -l
+  539  mvn -q -DskipTests exec:java -Dexec.mainClass="perf.LoadInitiator" -Dexec.args="configs/initiator_oe.cfg yesno=YES price=0.40 symbol=CBBTC_123125_142500 accountname=Ronaldo orderquantity=12"
+  540  grep repeaterScript
+  541  mvn -q -DskipTests exec:java -Dexec.mainClass="perf.LoadInitiator" -Dexec.args="configs/initiator_oe.cfg yesno=YES price=0.40 symbol=CBBTC_123125_142500 accountname=Ronaldo orderquantity=12"
+  542  mvn -q -DskipTests exec:java -Dexec.mainClass="perf.LoadInitiator" -Dexec.args="configs/initiator_oe.cfg yesno=YES price=0.40 symbol=CBBTC_123125_142500 accountname=Ronaldo orderquantity=14"
+  543  tail -n 20 logs/oe/FIXT.1.1-4C001-ForecastEx.messages.log   | tr '\001' '|'   | grep -n "$CID" -A1 -B1
+  544  mvn clean install
+  545  ls d*
+  546  ls -ltr data/
+  547  cat data/clseq.dat
+  548  mvn clean install
+  549  mvn -q -DskipTests exec:java -Dexec.mainClass="perf.LoadInitiator" -Dexec.args="configs/initiator_oe.cfg yesno=YES price=0.40 symbol=CBBTC_123125_142500 accountname=Ronaldo orderquantity=15"
+  550  tail -n 100 logs/oe/FIXT.1.1-4C001-ForecastEx.messages.log   | tr '\001' '|'   | grep '\|35=D\|' -A0
+  551  tail -n 100 logs/oe/FIXT.1.1-4C001-ForecastEx.messages.log   | tr '\001' '|'   | grep '\|35=D\|'   | grep -E '\|(528=A|581=1|582=4|762=YES|59=1)\|'
+  552  ls -l logs/oe/FIXT.1.1-4C001-ForecastEx
+  553  ls -l logs/oe/FIXT.1.1-4C001-ForecastExtail -n 10 logs/oe/FIXT.1.1-4C001-ForecastEx.messages.log | tr '\001' '|'
+  554  tail -n 10 logs/oe/FIXT.1.1-4C001-ForecastEx.messages.log | tr '\001' '|'
+  555  C
+  556  mvn clean package -DskipTests
+  557  ls -ltr target/
+  558  ls -ltr releases/
+  559  cp releases/LoadInitiatorSingle.jar releases/LoadInitiatorSingle.firstjarfile20251003
+  560  ls -ltr releases/
+  561  ls -ltr target/
+  562  cp tar
+  563  cp target/LoadInitiatorSingle.jar releases/LoadInitiatorSingle.jar
+  564  ls -ltr target/
+  565  ls -ltr releases/
+  566  jar -jar releases/LoadInitiatorSingle.jar configs/initiator_oe.cfg yesno=YES price=0.40 symbol=CBBTC_123125_142500 accountname=Ronaldo orderquantity=14
+  567  qf
+  568  ls
+  569  ls -ltr target
+  570  date
+  571  cd ..
+  572  qf
+  573  ls -ltr configs/
+  574  jh
+  575  ls
+  576  ls -ltr
+  577  qf
+  578  ls
+  579  ls -ltr
+  580  cd ..
+  581  ls
+  582  cd BashScriptsMain/
+  583  ls
+  584  ./20251009_orderRepeater.sh
+  585  vi ./20251009_orderRepeater.sh
+  586  ./20251009_orderRepeater.sh
+  587  vi ./20251009_orderRepeater.sh
+  588  ./20251009_orderRepeater.sh
+  589  vi ./20251009_orderRepeater.sh
+  590  ./20251009_orderRepeater.sh
+  591  jh
+  592  qf
+  593  cd ..
+  594  ls
+  595  cd RobStuff/
+  596  ls
+  597  cd backupjavasperf/
+  598  ls
+  599  more CancelInitiator.java 
+  600  ls
+  601  qf
+  602  ls
+  603  cd ..
+  604  cd fix-perf/
+  605  ls
+  606  ls -ltr
+  607  ls -ltr *
+  608  ls
+  609  cd ..
+  610  ls
+  611  mkdir pythonQF
+  612  cd pythonQF/
+  613  ls
+  614  vi gateway.py
+  615  vi initiator.cfg
+  616  mv gateway.py simple_initiator.py
+  617  ls
+  618  chmod +x *
+  619  python simple_initiator.py
+  620  python3 simple_initiator.py
+  621  # (assumes quickfix installed and Python can import it)
+  622  python3 simple_initiator.py initiator.cfg
+  623  pip install quickfix
+  624  df -h
+  625  pip cache purge
+  626  sudo dnf clean all
+  627  sudo rm -rf /var/cache/dnf
+  628  df -h
+  629  sudo journalctl --vacuum-size=100M
+  630  docker system df
+  631  systemctl status docker --no-pager
+  632  docker version
+  633  docker info
+  634  # Running containers with image, command, ports, and size-on-disk
+  635  docker ps --size --format 'table {{.Names}}\t{{.Image}}\t{{.Command}}\t{{.Ports}}\t{{.Size}}'
+  636  # Include stopped ones (history)
+  637  docker ps -a --format 'table {{.Names}}\t{{.Status}}\t{{.Image}}\t{{.CreatedAt}}'
+  638  docker logs --tail 100 <container>
+  639   docker logs --tail 100
+  640  vi temp.sh
+  641  mv temp.sh docker_summary.sh
+  642  vi docker_summary.sh 
+  643  chmod +x docker_summary.sh
+  644  ./docker_summary.sh
+  645  docker ps --size
+  646  docker system df
+  647  docker images
+  648  docker system prune -a --dry-run
+  649  docker images
+  650  cd ..
+  651  ls
+  652  cd fix-perf/
+  653  ls
+  654  cd logs
+  655  ls
+  656  cd ..
+  657  ls -ltr
+  658  ls * -ltr
+  659  qf
+  660  ls
+  661  jh
+  662  ls
+  663  qf
+  664  docker image prune -a -f
+  665  cd
+  666  ls
+  667  docker image prune -a -f
+  668  docker system prune -a -f
+  669  df
+  670  ls
+  671  cd pythonQF
+  672  ls
+  673  ./docker system prune -a -f
+  674  python3 simple_initiator.py 
+  675  pip install quickfix
+  676  ls
+  677  cp initiator.cfg quickfix_config.cfg
+  678  history
+  679  python3 simple_initiator.py
+  680  python3 simple_initiator.py initiator.cfg
+  681  cd ..
+  682  ls
+  683  cd fix-perf/
+  684  ls
+  685  ls -ltr *
+  686  ls -ltr * | grep FIX
+  687  jh
+  688  ls
+  689  more LoadInitiator.java
+  690  cat LoadInitiator.java | grep FIX
+  691  cat LoadInitiator.java | grep  xml
+  692  ls
+  693  qf
+  694  ls
+  695  ls -ltr * | grep -v fix
+  696  ls
+  697  ls configs/
+  698  pwd
+  699  cd /home/ec2-user/qfj-perf
+  700  cd ..
+  701  ls
+  702  cd pythonQF
+  703  ls
+  704  mkdir config
+  705  cp /home/ec2-user/qfj-perf/config/* .
+  706  cp /home/ec2-user/qfj-perf/configs/* .
+  707  ls
+  708  mv *.xml config
+  709  ls
+  710  mv *.cfg config
+  711  ls
+  712  python3 simple_initiator.py config/initiator.cfg
+  713  vi config/initiator.cfg
+  714  vi config/initiator.V2.cfg
+  715  cat config/initiator.cfg >> config/initiator.V2.cfg
+  716  vi config/initiator.V2.cfg
+  717  python3 simple_initiator.py config/initiator.V2.cfg
+  718  vi config/initiator.V2.cfg
+  719  python3 simple_initiator.py config/initiator.V2.cfg
+  720  cd pythonQF/
+  721  ls
+  722  vi sendOrder.py
+  723  jh
+  724  pwd
+  725  cd /home/ec2-user/qfj-perf/src/main/java/perf
+  726  ls
+  727  cd
+  728  ls
+  729  cd pythonRP/
+  730  ls
+  731  cd ..
+  732  rmdir pythonRP
+  733  cd pythonQF/
+  734  ls
+  735  history
+  736  cp /home/ec2-user/qfj-perf/src/main/java/perf/*java .
+  737  ls
+  738  rm EchoAcceptor.java
+  739  rm  ReplaceInitiator.java
+  740  ls
+  741  more LoadInitiator.java
+  742  grep SEND *
+  743  grep SEND */*
+  744  history
+  745  qf
+  746  grep SEND *\
+  747  grep SEND *
+  748  cd
+  749  cd pythonQF/
+  750  ls\
+  751  ls
+  752  vi sendOrder.py 
+  753  vi sendLimitGTCOrder.py
+  754  grep 25 *java
+  755  vi sendLimitGTCOrder.py
+  756  python3 sendLimitGTCOrder.py
+  757  python3 sendLimitGTCOrder.py config/initiator.V2.cfg 
+  758  ls
+  759  more LoadInitiator.java 
+  760  vi sendLimitGTCOrder.py
+  761  ls
+  762  cd pythonQF/
+  763  ls
+  764  ls -ltr
+  765  vi sendLimitGTCOrder.py 
+  766  ls
+  767  cd pythonQF/
+  768  ls
+  769  cd config/
+  770  ls
+  771  vi initiator.V2.cfg 
+  772  cd ..
+  773  ls
+  774  ls log
+  775  ls -ltr log
+  776  more FIXT.1.1-ForecastEx-4C001.event.current.log
+  777  more log/*
+  778   ls
+  779  history
+  780  vi runpyorder.sh
+  781  ls
+  782  python3 ./sendLimitGTCOrder.py config/initiator.V2.cfg 
+  783  more log/*
+  784  ls config/
+  785  cd config/
+  786  mkdir old
+  787  mv initiator_oe.v2.cfg old
+  788  mv initiator.cfg old
+  789  mv initiator_md.cfg old
+  790  more old/*md*
+  791  ls
+  792  mv quickfix_config.cfg old
+  793  ls
+  794  vi initiator.V2.cfg 
+  795  cd ..
+  796  python3 ./sendLimitGTCOrder.py config/initiator.V2.cfg 
+  797  tail -f log/*events* log/*messages* | sed 's/\x01/|/g'
+  798  ls
+  799  vi GTCVerbose.py
+  800  diff GTCVerbose.py sendLimitGTCOrder.py 
+  801  vi initiator.V2.cfg 
+  802  vi sendLimitGTCOrder.py 
+  803  diff GTCVerbose.py sendLimitGTCOrder.py 
+  804  cd pythonQF/
+  805  grep fix50 *
+  806  grep "nos.setField" *
+  807  vi sendLimitGTCOrder.py 
+  808  ls .swp
+  809  ls *.swp
+  810  vi sendLimitGTCOrder.py 
+  811  ls .*.swp
+  812  rm .se*.swp
+  813  vi sendLimitGTCOrder.py 
+  814  python3 sendLimitGTCOrder.py config/initiator.V2.cfg 
+  815  tail -50 log/*
+  816  tail -50 logs/*
+  817  ls log
+  818  tail log/*
+  819  rm log/FIXT.1.1-ForecastEx-4C001.event.current.log
+  820  tail log/*
+  821  rm log/FIXT.1.1-ForecastEx-4C001.messages.current.log
+  822  tail log/*
+  823  tail -f log/*messages* | sed $'s/\x01/|/g'
+  824  vi sendLimitGTCOrder.py 
+  825  grep CustOrderCapacity *
+  826  vi sendLimitGTCOrder.py 
+  827  python3 sendLimitGTCOrder.py config/initiator.V2.cfg 
+  828  tail -f log/*messages* | sed $'s/\x01/|/g'
+  829  vi sendLimitGTCOrder.py 
+  830  python3 sendLimitGTCOrder.py config/initiator.V2.cfg 
+  831  grep Security *
+  832  vi sendLimitGTCOrder.py 
+  833  python3 sendLimitGTCOrder.py config/initiator.V2.cfg 
+  834  vi sendLimitGTCOrder.py 
+  835  cancelOneOrder.py
+  836  vi cancelOneOrder.py
+  837  tail cancelOneOrder.py
+  838  python3 cancelOneOrder.py config/initiator.V2.cfg "CL-0bad31a1-cb86-4f7d-abe1-09e39e1e8b49" "CBBTC_123125_125000" "BUY"
+  839  python3 cancelOneOrder.py config/initiator.V2.cfg "CL-0bad31a1-cb86-4f7d-abe1-09e39e1e8b4" "CBBTC_123125_125000" "BUY"
+  840  tail -f log/*messages* | sed $'s/\x01/|/g'
+  841  python3 sendLimitGTCOrder.py config/initiator.V2.cfg 
+  842  tail -f log/*messages* | sed $'s/\x01/|/g'
+  843  python3 cancelOneOrder.py config/initiator.V2.cfg CL-9eb6d30e-72be-429f-8a99-be38998a269a "CBBTC_123125_125000" "BUY"
+  844  python3 cancelOneOrder.py config/initiator.V2.cfg CL-9eb6d30e-72be-429f-8a99-be38998a269a CBBTC_123125_125000 "BUY"
+  845  python3 cancelOneOrder.py config/initiator.V2.cfg CL-9eb6d30e-72be-429f-8a99-be38998a269a CBBTC_123125_125000 BUY
+  846  tr '\001' '|' < log/*messages* | grep '35=8|' | grep '55=CBBTC_123125_125000' | grep '150=0' | tail -n 3
+  847  cat log/*messages* | tr '\001' '|'
+  848  cat log/*messages* | tr '\001' '|'  | grep '35=8|' | grep '55=CBBTC_123125_125000' | grep '150=0' | tail -n 3
+  849  python3 cancelOneOrder.py config/initiator.V2.cfg CXL-ae6dcd04-343e-46c1-bfc6-dbfc2768e1f4 CBBTC_123125_125000 BUY
+  850  cat log/*messages* | tr '\001' '|'  | grep '35=8|' | grep '55=CBBTC_123125_125000' | grep '150=0' | tail -n 3 | grep -v CXL
+  851  python3 cancelOneOrder.py config/initiator.V2.cfg CL-9eb6d30e-72be-429f-8a99-be38998a269a CBBTC_123125_125000 BUY 
+  852  python3 cancelOneOrder.py config/initiator.V2.cfg "CL-9eb6d30e-72be-429f-8a99-be38998a269a" "CBBTC_123125_125000" "BUY" 
+  853  python3 cancelOneOrder.py config/initiator.V2.cfg 'CL-9eb6d30e-72be-429f-8a99-be38998a269a' 'CBBTC_123125_125000' 'BUY'
+  854  vi cancelOneOrder.py
+  855  ls
+  856  ls -ltr
+  857  cp sendLimitGTCOrder.py SendRepeatOrders.py
+  858  vi SendRepeatOrders.py 
+  859  ls
+  860  history
+  861  ls -ltr
+  862  cd pythonQF/
+  863  ls -ltr
+  864  ls .*swp
+  865  vi SendRepeatOrders.py 
+  866  rm .*swp
+  867  vi SendRepeatOrders.py 
+  868  history
+  869  python3 SendRepeatOrders.py config/initiator.V2.cfg
+  870  vi SendRepeatOrders.py 
+  871  python3 SendRepeatOrders.py config/initiator.V2.cfg
+  872  vi SendRepeatOrders.py 
+  873  python3 SendRepeatOrders.py config/initiator.V2.cfg
+  874  vi SendRepeatOrders.py 
+  875  python3 SendRepeatOrders.py config/initiator.V2.cfg
+  876  vi SendRepeatOrders.py 
+  877  python3 SendRepeatOrders.py config/initiator.V2.cfg
+  878  vi SendRepeatOrders.py 
+  879  python3 SendRepeatOrders.py config/initiator.V2.cfg
+  880  vi SendRepeatOrders.py 
+  881  python3 SendRepeatOrders.py config/initiator.V2.cfg
+  882  vi SendRepeatOrders.py 
+  883  python3 SendRepeatOrders.py config/initiator.V2.cfg
+  884  vi SendRepeatOrders.py 
+  885  python3 SendRepeatOrders.py config/initiator.V2.cfg
+  886  vi SendRepeatOrders.py 
+  887  python3 SendRepeatOrders.py config/initiator.V2.cfg
+  888  vi SendRepeatOrders.py 
+  889  python3 SendRepeatOrders.py config/initiator.V2.cfg
+  890  history
+  891  tail -n 100 logs/oe/FIXT.1.1-4C001-ForecastEx.messages.log   | tr '\001' '|'
+  892  logs
+  893  ls logs
+  894  ls
+  895  ls log
+  896  ls -ltr log
+  897  tail log/F*
+  898  vi SendRepeatOrders.py 
+  899  python3 SendRepeatOrders.py config/initiator.V2.cfg
+  900  tail log/F*
+  901  vi SendRepeatOrders.py 
+  902  python3 SendRepeatOrders.py config/initiator.V2.cfg
+  903  vi SendRepeatOrders.py 
+  904  python3 SendRepeatOrders.py config/initiator.V2.cfg
+  905  vi SendRepeatOrders.py 
+  906  python3 SendRepeatOrders.py config/initiator.V2.cfg
+  907  vi SendRepeatOrders.py 
+  908  python3 SendRepeatOrders.py config/initiator.V2.cfg
+  909  vi SendRepeatOrders.py 
+  910  python3 SendRepeatOrders.py config/initiator.V2.cfg
+  911  vi SendRepeatOrders.py 
+  912  tail log/F*
+  913  history | grep tr
+  914  tail log/F* | tr '\001' '|'
+  915  history >goodhistory
+  916  vi SendRepeatOrders.py 
+  917  ls config
+  918  ls config/initiator.V2.cfg 
+  919  cat config/initiator.V2.cfg
+  920  ls config
+  921  pwd
+  922  vi config/initiator.V2.cfg
+  923  ls ./spec
+  924  qf
+  925  ls ./spec
+  926  ls spec
+  927  ls
+  928  cd ..
+  929  pwd
+  930  ls -ltr *
+  931  ls -ltr * | grep spec
+  932  ls -ltr * | grep FIX
+  933  ls -ltr */* | grep FIX
+  934  ls -ltr */*/* | grep FIX
+  935  cd pythonQF/
+  936  vi config/initiator.V2.cfg
+  937  ls
+  938  ls .swp
+  939  ls .*swp
+  940  ls .*.swp
+  941  ls
+  942  cd pythonQF/
+  943  ls .*.swp
+  944  ls .*swp
+  945  ls -ltr
+  946  vi SendRepeatOrders.py 
+  947  ls
+  948  grep python goodhistory 
+  949  python3 SendRepeatOrders.py config/initiator.V2.cfg
+  950  vi SendRepeatOrders.py 
+  951  python3 SendRepeatOrders.py config/initiator.V2.cfg
+  952  cd ..
+  953  find . -name "*FIX"
+  954  find . -name "*fix"
+  955  find . -name "*fix*"
+  956  find . -name "*fix*"  
+  957  find . -name "*fix*"  | grep py
+  958  cat ./.local/lib/python3.9/site-packages/quickfix50sp2.py
+  959  cat ./.local/lib/python3.9/site-packages/quickfix50sp2.py | grep Time
+  960  cat ./.local/lib/python3.9/site-packages/quickfix50sp2.py | grep TimeIn
+  961  cat ./.local/lib/python3.9/site-packages/quickfix50sp2.py | grep -C8 TimeIn
+  962  cat ./.local/lib/python3.9/site-packages/quickfix50sp2.py | more
+  963  pwd
+  964  vi .bashrc
+  965  source .bashrc
+  966  h
+  967  wc ./.local/lib/python3.9/site-packages/quickfix50sp2.py
+  968  tail ./.local/lib/python3.9/site-packages/quickfix50sp2.py
+  969  tail -50./.local/lib/python3.9/site-packages/quickfix50sp2.py
+  970  tail -50 ./.local/lib/python3.9/site-packages/quickfix50sp2.py
+  971  rp
+  972  vi .bashrc
+  973  source .bashrc
+  974  rp
+  975  grep Time *py
+  976  grep IMMEDIATE_OR_CANCEL *
+  977  h
+  978  cat ./.local/lib/python3.9/site-packages/quickfix50sp2.py | grep IMMEDIATE_OR_CANCEL
+  979  cat /.local/lib/python3.9/site-packages/quickfix50sp2.py | grep IMMEDIATE_OR_CANCEL
+  980  cat /local/lib/python3.9/site-packages/quickfix50sp2.py | grep IMMEDIATE_OR_CANCEL
+  981  cd 
+  982  ls
+  983  cat ./.local/lib/python3.9/site-packages/quickfix50sp2.py | grep IMMEDIATE_OR_CANCEL
+  984  cat ./.local/lib/python3.9/site-packages/*.py | grep IMMEDIATE_OR_CANCEL
+  985   grep IMMED ./.local/lib/python3.9/site-packages/*.py
+  986   grep DAY ./.local/lib/python3.9/site-packages/*.py
+  987   grep DAY ./.local/lib/python3.9/site-packages/*.py | grep Time
+  988   grep TimeIn ./.local/lib/python3.9/site-packages/*.py | grep Time
+  989  rp
+  990  ls
+  991  ls -ltr
+  992  vi SendRepeatOrders.py 
+  993  python3 SendRepeatOrders.py config/initiator.V2.cfg
+  994  vi SendRepeatOrders.py 
+  995  python3 SendRepeatOrders.py config/initiator.V2.cfg
+  996  vi SendRepeatOrders.py 
+  997  python3 SendRepeatOrders.py config/initiator.V2.cfg
+  998  vi SendRepeatOrders.py 
+  999  python3 SendRepeatOrders.py config/initiator.V2.cfg
+ 1000  rp
+ 1001  ls
+ 1002  ls -ltr
+ 1003  h > hist1
