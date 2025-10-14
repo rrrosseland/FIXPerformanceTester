@@ -2,31 +2,47 @@
 import time, uuid, threading, re
 from pathlib import Path
 # rpdir can start as a string or a Path—make it a Path either way
+QTY           = 1
+maxloop = 4
+PRICE   = 0.01
+incr = 0.01
+################################
+#trademode = "layerLower45s"
+trademode = "latencyTest1"
+#trademode = "repeatOrders"
+
+if trademode == "layerLower45s":
+    PRICE   = 0.01
+    QTY = 1
+    maxloop = 47
+    incr = 0.01
+if trademode == "latencyTest1":
+    PRICE   = 0.02
+    QTY = 1
+    maxloop = 4000
+    incr = 0.0
+if trademode == "repeatOrders":
+    PRICE   = 0.51
+    QTY = 1
+    maxloop = 40
+    incr = 0.0
+
 rpdir = Path("/home/ec2-user/pythonQF")          # or Path.home(), Path.cwd(), etc.
 # Build child paths
 data_dir = rpdir / "data"
 log_file = rpdir / "logs" / "app.log"
-rplog_file = rpdir / "logs" / "rpapp.log"
+rplog_file = rpdir / "log" / "rpapp.log"
 import quickfix as fix
 import quickfix50sp2 as fix50sp2
-
-#------------definition of variables
-#...................................
-#tif            ="GOOD_TILL_CANCEL"
-tif             ="TimeInForce_DAY"
-
-SENDER_SUB_ID  = "4C001"   # EP3 user/trader (tag 50) – header on app messages only
-ACCOUNT        = "Ronaldo"
+#tif=TimeInForce_GTC
+tif="TimeInForce_DAY"  #### not being used as the variable would not pass
+SENDER_SUB_ID = "4C001"   # EP3 user/trader (tag 50) – header on app messages only
+ACCOUNT       = "YOUR_ACCOUNT"
 #SYMBOL        = "CBBTC_123125_65000"
 #SYMBOL        = "CBBTC_123125_142500"
-#SYMBOL         = "MNYCG_110425_Mamdani" 
-SYMBOL         = "CBBTC_123125_132500"
-SecSubType     = "YES"
-SIDE_BUY       = True  # set False for sell
-QTY            = 1
-maxloop = 4
-PRICE   = 0.01
-incr = 0.01
+SYMBOL        = "CBBTC_123125_132500"
+SecSubType    = "YES"
+SIDE_BUY      = True          # set False for sell
 
 class App(fix.Application):
     def __init__(self):
@@ -59,7 +75,7 @@ class App(fix.Application):
         # Add SenderSubID(50) to *all* application messages
         msg.getHeader().setField(fix.SenderSubID(SENDER_SUB_ID))
     def fromApp(self, msg, sid):
-        print("[APP]", msg.toString())
+        #print("[APP]", msg.toString())
         # Open file in append mode
         with rplog_file.open("a", encoding="utf-8") as f:
             f.write(msg.toString() + "\n")
@@ -87,7 +103,7 @@ class App(fix.Application):
         nos.setField(fix.TimeInForce(fix.TimeInForce_DAY))    # DAY 59=0 (DAY)
         #nos.setField(fix.TimeInForce(0))    # 59=1 (GTC) and DAY = 0 THIS DOES NOT WORK!!!
         ok = fix.Session.sendToTarget(nos, self.session_id)
-        print(f"[SEND] GTC LIMIT {symbol} {('BUY' if buy else 'SELL')} {qty} @ {price} {SecSubType} -> {ok}")
+        #print(f"[SEND] GTC LIMIT {symbol} {('BUY' if buy else 'SELL')} {qty} @ {price} {SecSubType} -> {ok}")
         msgstrrp = (f"[SEND] GTC LIMIT {symbol} {('BUY' if buy else 'SELL')} {qty} @ {price} {SecSubType} -> {ok}")
         with rplog_file.open("a", encoding="utf-8") as f:
             f.write(msgstrrp + "\n")
@@ -108,11 +124,20 @@ def main(cfg):
         # layer up the lower half of book, then the upper half or start at 99 and go down in increm
         while i <= maxloop :
             NEWPRICE  =  NEWPRICE + incr
-            SecSubType = "YES"
-            app.send_gtc_limit(SYMBOL, SIDE_BUY, QTY, NEWPRICE, SecSubType, ACCOUNT)
-            SecSubType = "NO"
-            app.send_gtc_limit(SYMBOL, SIDE_BUY, QTY, NEWPRICE, SecSubType, ACCOUNT)
-            time.sleep(0.01)
+            if trademode == "latencyTest1":
+                SecSubType = "YES"
+                app.send_gtc_limit(SYMBOL, SIDE_BUY, QTY, NEWPRICE, SecSubType, ACCOUNT)
+            elif trademode == "layerLower45s":
+                SecSubType = "YES"
+                app.send_gtc_limit(SYMBOL, SIDE_BUY, QTY, NEWPRICE, SecSubType, ACCOUNT)
+                SecSubType = "NO"
+                app.send_gtc_limit(SYMBOL, SIDE_BUY, QTY, NEWPRICE, SecSubType, ACCOUNT)
+            else:
+                SecSubType = "YES"
+                app.send_gtc_limit(SYMBOL, SIDE_BUY, QTY, NEWPRICE, SecSubType, ACCOUNT)
+                SecSubType = "NO"
+                app.send_gtc_limit(SYMBOL, SIDE_BUY, QTY, NEWPRICE, SecSubType, ACCOUNT)
+            time.sleep(0.00001)
             print(i)
             i += 1
         # keep session alive to receive ExecReports

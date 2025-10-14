@@ -2,31 +2,37 @@
 import time, uuid, threading, re
 from pathlib import Path
 # rpdir can start as a string or a Path—make it a Path either way
+QTY           = 1
+maxloop = 4
+PRICE   = 0.01
+incr = 0.01
+################################
+#trademode = "layerLower45s"
+trademode = "latencyTest1"
+#trademode = "repeatOrders"
+
+if trademode == "latencyTest1":
+    PRICE   = 0.02
+    QTY = 1
+    maxloop = 40000
+    incr = 0.0
+
 rpdir = Path("/home/ec2-user/pythonQF")          # or Path.home(), Path.cwd(), etc.
 # Build child paths
 data_dir = rpdir / "data"
 log_file = rpdir / "logs" / "app.log"
-rplog_file = rpdir / "logs" / "rpapp.log"
+rplog_file = rpdir / "log" / "rpapp.log"
 import quickfix as fix
 import quickfix50sp2 as fix50sp2
-
-#------------definition of variables
-#...................................
-#tif            ="GOOD_TILL_CANCEL"
-tif             ="TimeInForce_DAY"
-
-SENDER_SUB_ID  = "4C001"   # EP3 user/trader (tag 50) – header on app messages only
-ACCOUNT        = "Ronaldo"
+#tif=TimeInForce_GTC
+tif="TimeInForce_DAY"  #### not being used as the variable would not pass
+SENDER_SUB_ID = "4C001"   # EP3 user/trader (tag 50) – header on app messages only
+ACCOUNT       = "YOUR_ACCOUNT"
 #SYMBOL        = "CBBTC_123125_65000"
 #SYMBOL        = "CBBTC_123125_142500"
-#SYMBOL         = "MNYCG_110425_Mamdani" 
-SYMBOL         = "CBBTC_123125_132500"
-SecSubType     = "YES"
-SIDE_BUY       = True  # set False for sell
-QTY            = 1
-maxloop = 4
-PRICE   = 0.01
-incr = 0.01
+SYMBOL        = "CBBTC_123125_132500"
+SecSubType    = "YES"
+SIDE_BUY      = True          # set False for sell
 
 class App(fix.Application):
     def __init__(self):
@@ -108,10 +114,14 @@ def main(cfg):
         # layer up the lower half of book, then the upper half or start at 99 and go down in increm
         while i <= maxloop :
             NEWPRICE  =  NEWPRICE + incr
-            SecSubType = "YES"
-            app.send_gtc_limit(SYMBOL, SIDE_BUY, QTY, NEWPRICE, SecSubType, ACCOUNT)
-            SecSubType = "NO"
-            app.send_gtc_limit(SYMBOL, SIDE_BUY, QTY, NEWPRICE, SecSubType, ACCOUNT)
+            if trademode == "latencyTest1":
+                SecSubType = "YES"
+                app.send_gtc_limit(SYMBOL, SIDE_BUY, QTY, NEWPRICE, SecSubType, ACCOUNT)
+            else:
+                SecSubType = "YES"
+                app.send_gtc_limit(SYMBOL, SIDE_BUY, QTY, NEWPRICE, SecSubType, ACCOUNT)
+                SecSubType = "NO"
+                app.send_gtc_limit(SYMBOL, SIDE_BUY, QTY, NEWPRICE, SecSubType, ACCOUNT)
             time.sleep(0.01)
             print(i)
             i += 1
