@@ -1,0 +1,241 @@
+2c2
+< import time, uuid, threading, re, pytz, sys, signal
+---
+> import time, uuid, threading, re, pytz, sys
+8,9d7
+< 
+< # rpdir can start as a string or a Path—make it a Path either way
+11,13c9,11
+< #trademode = "layer"
+< trademode = "latency"
+< #trademode = "repeat"
+---
+> trademode = "repeatOrders"
+> trademode = "repeatOrders"
+> trademode = "repeatOrders"
+15,25c13
+< if trademode == "layer":
+<     PRICE   = 0.01
+<     QTY = 1
+<     maxloop = 47
+<     incr = 0.01
+< if trademode == "latency":
+<     PRICE   = 0.51
+<     QTY = 1
+<     maxloop = 400
+<     incr = 0.0
+< if trademode == "repeat":
+---
+> if trademode == "repeatOrders":
+28,29c16,17
+<     maxloop = 40
+<     incr = 0.0
+---
+>     maxloop = 100
+>     incr = 0.00
+35a24
+> # arguments:
+37,73c26,36
+< # ACCOUNT      = "yesRonaldo"
+< # ACCOUNT      = "noRonaldo"
+< # ACCOUNT      = "yesTippy"
+< ACCOUNT        = "noTippy"
+< #SYMBOL        = "CBBTC_123125_65000"
+< #SYMBOL        = "CBBTC_123125_142500"
+< #SYMBOL        = "MNYCG_110425_Mamdani" 
+< SYMBOL         = "CBBTC_123125_132500"
+< SecSubType     = "NO"
+< #SecSubType     = "YES"
+< SIDE_BUY       = True  # set False for sell
+< QTY            = 1
+< maxloop = 400
+< PRICE   = 0.51
+< incr = 0.00
+< 
+< # Ctrl+C behavior: pause sends, keep session up 15s, then close
+< stop_sending = threading.Event()
+< logout_now   = threading.Event()
+< 
+< def _delayed_close():
+<     print("[CTRL-C] 15s elapsed — closing FIX session now.")
+<     logout_now.set()
+< 
+< def _sigint_handler(signum, frame):
+<     if not stop_sending.is_set():
+<         stop_sending.set()
+<         print("[CTRL-C] Pausing submissions. Session will stay LOGGED IN for 15 seconds...")
+<         print("          Press CTRL+C again to close immediately.")
+<         t = threading.Timer(15.0, _delayed_close)
+<         t.daemon = True
+<         t.start()
+<     else:
+<         print("[CTRL-C] Immediate close requested.")
+<         logout_now.set()
+< 
+< signal.signal(signal.SIGINT, _sigint_handler)
+---
+> # ACCOUNT = "yesRonaldo"
+> ACCOUNT = "noRonaldo"
+> #ACCOUNT = "noTippy"
+> #ACCOUNT = "yesTippy"
+> #ACCOUNT = "RPTEST"
+> #SYMBOL = "CBBTC_123125_142500"
+> #SYMBOL = "MNYCG_110425_Mamdani" 
+> SYMBOL = "CBBTC_123125_132500"
+> #SecSubType = "YES"
+> SecSubType = "NO"
+> SIDE_BUY = True  # set False for sell
+102c65
+<         print(f"[COMPLETION] Workflow finished at {utc_str} / {est_str}")
+---
+>         print(f"[COMPLETION] just logged out Workflow finished at {utc_str} / {est_str}")
+124c87
+<         print("[APP]", msg.toString())
+---
+>         # print("[APP]", msg.toString())
+132,133c95
+<     # send one GTC limit order
+<     def send_gtc_limit(self, symbol, buy, qty, price, SecSubType, account=None):
+---
+>     def send_limit(self, symbol, buy, qty, price, SecSubType, account=None):
+138c100
+<         nos.setField(fix.Side(fix.Side_BUY if buy else fix.Side_SELL))     # 54
+---
+>         nos.setField(fix.Side(fix.Side_BUY))     # 54
+145c107,109
+<         nos.setField(fix.SecuritySubType("SecSubType"))                    # 762 Required for YES NO
+---
+>         nos.setField(fix.SecuritySubType(SecSubType))                    # 762 Required for YES NO
+>         #tif = TimeInForce_GOOD_TILL_CANCEL
+>         #tif = TimeInForce_DAY ###to move tif outside this def, need to add as a param of def ##
+147c111
+<         #nos.setField(fix.TimeInForce(fix.(tif.toString())))    # DAY 59=0 (DAY)
+---
+>         #nos.setField(fix.TimeInForce(fix.tif)    # DAY 59=0 (DAY)
+149d112
+<         #nos.setField(fix.TimeInForce(0))    # 59=1 (GTC) and DAY = 0 THIS DOES NOT WORK!!!
+150a114
+>         #nos.setField(fix.TimeInForce(0))    # 59=1 (GTC) and DAY = 0 THIS DOES NOT WORK!!!
+155,205d118
+<             
+< 
+< 
+< 
+< 
+<     def main(cfg):
+<         settings = fix.SessionSettings(cfg)
+<         app = App()
+<         store = fix.FileStoreFactory(settings)
+<         logs  = fix.FileLogFactory(settings)
+<         init  = fix.SocketInitiator(app, store, settings, logs)
+<         init.start()
+<         
+< #### DAY ORDERS will get CXLD upon sesson logout. GTC will persist
+< #Start the decsion process for Latency or layer or stack
+< try:
+< # wait for logon then fire one order
+< while app.session_id is None:
+<     time.sleep(0.1)
+< 
+< i = 1
+< NEWPRICE = PRICE
+< while i <= maxloop and not stop_sending.is_set():
+<     NEWPRICE = NEWPRICE + incr
+<     if trademode == "latencyTest":
+<         SecSubType = "NO"
+<         app.send_gtc_limit(SYMBOL, SIDE_BUY, QTY, NEWPRICE, SecSubType, ACCOUNT)
+<     elif trademode == "layerLower45s":
+<         SecSubType = "YES"
+<         app.send_gtc_limit(SYMBOL, SIDE_BUY, QTY, NEWPRICE, SecSubType, ACCOUNT)
+<         SecSubType = "NO"
+<         app.send_gtc_limit(SYMBOL, SIDE_BUY, QTY, NEWPRICE, SecSubType, ACCOUNT)
+<     else:
+<         SecSubType = "YES"
+<         app.send_gtc_limit(SYMBOL, SIDE_BUY, QTY, NEWPRICE, SecSubType, ACCOUNT)
+<         SecSubType = "NO"
+<         app.send_gtc_limit(SYMBOL, SIDE_BUY, QTY, NEWPRICE, SecSubType, ACCOUNT)
+< 
+<     time.sleep(0.00001)
+<     print(i)
+<     i += 1
+< 
+<      # After sending stops (either finished or Ctrl+C pressed once):
+<     if stop_sending.is_set():
+<         # Keep session alive for 15s (timer is already ticking) unless user presses Ctrl+C again
+<         while not logout_now.is_set():
+<             time.sleep(0.2)
+<     else:
+<         # Finished naturally; keep session up to receive ExecReports until user interrupts
+<         while not logout_now.is_set():
+<             time.sleep(1)
+206a120,154
+> def main(cfg):
+>     settings = fix.SessionSettings(cfg)
+>     app = App()
+>     store = fix.FileStoreFactory(settings)
+>     logs  = fix.FileLogFactory(settings)
+>     init  = fix.SocketInitiator(app, store, settings, logs)
+>     init.start()
+>     #### DAY ORDERS will get CXLD upon sesson logout. GTC will persist
+>     try:
+>         # wait for logon then fire orders
+>         while app.session_id is None: time.sleep(0.1)
+>         i = 1
+>         NEWPRICE  = PRICE 
+>         # layer up the lower half of book, then the upper half or start at 99 and go down in increm
+>         while i <= maxloop :
+>             NEWPRICE  =  NEWPRICE + incr
+>             if trademode == "latencyTest":
+>                 #SecSubType = "YES"
+>                 SecSubType = "NO"
+>                 app.send_limit(SYMBOL, SIDE_BUY, QTY, NEWPRICE, SecSubType, ACCOUNT)
+>             elif trademode == "layerLower45s":
+>                 SecSubType = "YES"
+>                 app.send_limit(SYMBOL, SIDE_BUY, QTY, NEWPRICE, SecSubType, ACCOUNT)
+>                 SecSubType = "NO"
+>                 app.send_limit(SYMBOL, SIDE_BUY, QTY, NEWPRICE, SecSubType, ACCOUNT)
+>             else:
+>                 SecSubType = "YES"
+>                 app.send_limit(SYMBOL, SIDE_BUY, QTY, NEWPRICE, SecSubType, ACCOUNT)
+>                 SecSubType = "NO"
+>                 app.send_limit(SYMBOL, SIDE_BUY, QTY, NEWPRICE, SecSubType, ACCOUNT)
+>             time.sleep(0.0000001)
+>             print(i)
+>             i += 1
+>         # keep session alive to receive ExecReports
+>         while True: time.sleep(1)
+208d155
+<         # If a second Ctrl+C arrived while sleeping, we'll land here; fall through to finally
+210,227c157,168
+<     finally:
+<         init.stop()    
+< 
+<     if __name__ == "__main__":
+<         if len(sys.argv) < 2:
+<             print("Usage: python3 MasterSendOrders.py initiator.cfg [Latency]")
+<             raise SystemExit(1)
+< 
+<         cfg = sys.argv[1]
+<         mode = sys.argv[2].lower() if len(sys.argv) >= 3 else ""
+< 
+<         if mode == "latency":
+<             print("[MODE] Launching FIXLatencyTester...")
+<             import FIXLatencyTester
+<             FIXLatencyTester.main(cfg)
+<         else:
+<             print("[MODE] Launching MasterSendOrders default mode...")
+<             main(cfg)
+\ No newline at end of file
+---
+>     #finally:
+>         #init.stop()
+>         #pass
+> 
+> if __name__ == "__main__":
+>     if len(sys.argv) < 2:
+>         print("Usage: python3 MasterSendOrders.py initiator.cfg [Latency]")
+>         raise SystemExit(1)
+> 
+>     cfg = sys.argv[1]
+>     mode = sys.argv[2].lower() if len(sys.argv) >= 3 else ""
+>     main(cfg)

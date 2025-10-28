@@ -1,0 +1,1000 @@
+    4  docker system prune -a -f
+    5  df
+    6  ls
+    7  cd pythonQF
+    8  ls
+    9  ./docker system prune -a -f
+   10  python3 simple_initiator.py 
+   11  pip install quickfix
+   12  ls
+   13  cp initiator.cfg quickfix_config.cfg
+   14  history
+   15  python3 simple_initiator.py
+   16  python3 simple_initiator.py initiator.cfg
+   17  cd ..
+   18  ls
+   19  cd fix-perf/
+   20  ls
+   21  ls -ltr *
+   22  ls -ltr * | grep FIX
+   23  jh
+   24  ls
+   25  more LoadInitiator.java
+   26  cat LoadInitiator.java | grep FIX
+   27  cat LoadInitiator.java | grep  xml
+   28  ls
+   29  qf
+   30  ls
+   31  ls -ltr * | grep -v fix
+   32  ls
+   33  ls configs/
+   34  pwd
+   35  cd /home/ec2-user/qfj-perf
+   36  cd ..
+   37  ls
+   38  cd pythonQF
+   39  ls
+   40  mkdir config
+   41  cp /home/ec2-user/qfj-perf/config/* .
+   42  cp /home/ec2-user/qfj-perf/configs/* .
+   43  ls
+   44  mv *.xml config
+   45  ls
+   46  mv *.cfg config
+   47  ls
+   48  python3 simple_initiator.py config/initiator.cfg
+   49  vi config/initiator.cfg
+   50  vi config/initiator.V2.cfg
+   51  cat config/initiator.cfg >> config/initiator.V2.cfg
+   52  vi config/initiator.V2.cfg
+   53  python3 simple_initiator.py config/initiator.V2.cfg
+   54  vi config/initiator.V2.cfg
+   55  python3 simple_initiator.py config/initiator.V2.cfg
+   56  cd pythonQF/
+   57  ls
+   58  vi sendOrder.py
+   59  jh
+   60  pwd
+   61  cd /home/ec2-user/qfj-perf/src/main/java/perf
+   62  ls
+   63  cd
+   64  ls
+   65  cd pythonRP/
+   66  ls
+   67  cd ..
+   68  rmdir pythonRP
+   69  cd pythonQF/
+   70  ls
+   71  history
+   72  cp /home/ec2-user/qfj-perf/src/main/java/perf/*java .
+   73  ls
+   74  rm EchoAcceptor.java
+   75  rm  ReplaceInitiator.java
+   76  ls
+   77  more LoadInitiator.java
+   78  grep SEND *
+   79  grep SEND */*
+   80  history
+   81  qf
+   82  grep SEND *\
+   83  grep SEND *
+   84  cd
+   85  cd pythonQF/
+   86  ls\
+   87  ls
+   88  vi sendOrder.py 
+   89  vi sendLimitGTCOrder.py
+   90  grep 25 *java
+   91  vi sendLimitGTCOrder.py
+   92  python3 sendLimitGTCOrder.py
+   93  python3 sendLimitGTCOrder.py config/initiator.V2.cfg 
+   94  ls
+   95  more LoadInitiator.java 
+   96  vi sendLimitGTCOrder.py
+   97  ls
+   98  cd pythonQF/
+   99  ls
+  100  ls -ltr
+  101  vi sendLimitGTCOrder.py 
+  102  ls
+  103  cd pythonQF/
+  104  ls
+  105  cd config/
+  106  ls
+  107  vi initiator.V2.cfg 
+  108  cd ..
+  109  ls
+  110  ls log
+  111  ls -ltr log
+  112  more FIXT.1.1-ForecastEx-4C001.event.current.log
+  113  more log/*
+  114   ls
+  115  history
+  116  vi runpyorder.sh
+  117  ls
+  118  python3 ./sendLimitGTCOrder.py config/initiator.V2.cfg 
+  119  more log/*
+  120  ls config/
+  121  cd config/
+  122  mkdir old
+  123  mv initiator_oe.v2.cfg old
+  124  mv initiator.cfg old
+  125  mv initiator_md.cfg old
+  126  more old/*md*
+  127  ls
+  128  mv quickfix_config.cfg old
+  129  ls
+  130  vi initiator.V2.cfg 
+  131  cd ..
+  132  python3 ./sendLimitGTCOrder.py config/initiator.V2.cfg 
+  133  tail -f log/*events* log/*messages* | sed 's/\x01/|/g'
+  134  ls
+  135  vi GTCVerbose.py
+  136  diff GTCVerbose.py sendLimitGTCOrder.py 
+  137  vi initiator.V2.cfg 
+  138  vi sendLimitGTCOrder.py 
+  139  diff GTCVerbose.py sendLimitGTCOrder.py 
+  140  cd pythonQF/
+  141  grep fix50 *
+  142  grep "nos.setField" *
+  143  vi sendLimitGTCOrder.py 
+  144  ls .swp
+  145  ls *.swp
+  146  vi sendLimitGTCOrder.py 
+  147  ls .*.swp
+  148  rm .se*.swp
+  149  vi sendLimitGTCOrder.py 
+  150  python3 sendLimitGTCOrder.py config/initiator.V2.cfg 
+  151  tail -50 log/*
+  152  tail -50 logs/*
+  153  ls log
+  154  tail log/*
+  155  rm log/FIXT.1.1-ForecastEx-4C001.event.current.log
+  156  tail log/*
+  157  rm log/FIXT.1.1-ForecastEx-4C001.messages.current.log
+  158  tail log/*
+  159  tail -f log/*messages* | sed $'s/\x01/|/g'
+  160  vi sendLimitGTCOrder.py 
+  161  grep CustOrderCapacity *
+  162  vi sendLimitGTCOrder.py 
+  163  python3 sendLimitGTCOrder.py config/initiator.V2.cfg 
+  164  tail -f log/*messages* | sed $'s/\x01/|/g'
+  165  vi sendLimitGTCOrder.py 
+  166  python3 sendLimitGTCOrder.py config/initiator.V2.cfg 
+  167  grep Security *
+  168  vi sendLimitGTCOrder.py 
+  169  python3 sendLimitGTCOrder.py config/initiator.V2.cfg 
+  170  vi sendLimitGTCOrder.py 
+  171  cancelOneOrder.py
+  172  vi cancelOneOrder.py
+  173  tail cancelOneOrder.py
+  174  python3 cancelOneOrder.py config/initiator.V2.cfg "CL-0bad31a1-cb86-4f7d-abe1-09e39e1e8b49" "CBBTC_123125_125000" "BUY"
+  175  python3 cancelOneOrder.py config/initiator.V2.cfg "CL-0bad31a1-cb86-4f7d-abe1-09e39e1e8b4" "CBBTC_123125_125000" "BUY"
+  176  tail -f log/*messages* | sed $'s/\x01/|/g'
+  177  python3 sendLimitGTCOrder.py config/initiator.V2.cfg 
+  178  tail -f log/*messages* | sed $'s/\x01/|/g'
+  179  python3 cancelOneOrder.py config/initiator.V2.cfg CL-9eb6d30e-72be-429f-8a99-be38998a269a "CBBTC_123125_125000" "BUY"
+  180  python3 cancelOneOrder.py config/initiator.V2.cfg CL-9eb6d30e-72be-429f-8a99-be38998a269a CBBTC_123125_125000 "BUY"
+  181  python3 cancelOneOrder.py config/initiator.V2.cfg CL-9eb6d30e-72be-429f-8a99-be38998a269a CBBTC_123125_125000 BUY
+  182  tr '\001' '|' < log/*messages* | grep '35=8|' | grep '55=CBBTC_123125_125000' | grep '150=0' | tail -n 3
+  183  cat log/*messages* | tr '\001' '|'
+  184  cat log/*messages* | tr '\001' '|'  | grep '35=8|' | grep '55=CBBTC_123125_125000' | grep '150=0' | tail -n 3
+  185  python3 cancelOneOrder.py config/initiator.V2.cfg CXL-ae6dcd04-343e-46c1-bfc6-dbfc2768e1f4 CBBTC_123125_125000 BUY
+  186  cat log/*messages* | tr '\001' '|'  | grep '35=8|' | grep '55=CBBTC_123125_125000' | grep '150=0' | tail -n 3 | grep -v CXL
+  187  python3 cancelOneOrder.py config/initiator.V2.cfg CL-9eb6d30e-72be-429f-8a99-be38998a269a CBBTC_123125_125000 BUY 
+  188  python3 cancelOneOrder.py config/initiator.V2.cfg "CL-9eb6d30e-72be-429f-8a99-be38998a269a" "CBBTC_123125_125000" "BUY" 
+  189  python3 cancelOneOrder.py config/initiator.V2.cfg 'CL-9eb6d30e-72be-429f-8a99-be38998a269a' 'CBBTC_123125_125000' 'BUY'
+  190  vi cancelOneOrder.py
+  191  ls
+  192  ls -ltr
+  193  cp sendLimitGTCOrder.py SendRepeatOrders.py
+  194  vi SendRepeatOrders.py 
+  195  ls
+  196  history
+  197  ls -ltr
+  198  cd pythonQF/
+  199  ls -ltr
+  200  ls .*swp
+  201  vi SendRepeatOrders.py 
+  202  rm .*swp
+  203  vi SendRepeatOrders.py 
+  204  history
+  205  python3 SendRepeatOrders.py config/initiator.V2.cfg
+  206  vi SendRepeatOrders.py 
+  207  python3 SendRepeatOrders.py config/initiator.V2.cfg
+  208  vi SendRepeatOrders.py 
+  209  python3 SendRepeatOrders.py config/initiator.V2.cfg
+  210  vi SendRepeatOrders.py 
+  211  python3 SendRepeatOrders.py config/initiator.V2.cfg
+  212  vi SendRepeatOrders.py 
+  213  python3 SendRepeatOrders.py config/initiator.V2.cfg
+  214  vi SendRepeatOrders.py 
+  215  python3 SendRepeatOrders.py config/initiator.V2.cfg
+  216  vi SendRepeatOrders.py 
+  217  python3 SendRepeatOrders.py config/initiator.V2.cfg
+  218  vi SendRepeatOrders.py 
+  219  python3 SendRepeatOrders.py config/initiator.V2.cfg
+  220  vi SendRepeatOrders.py 
+  221  python3 SendRepeatOrders.py config/initiator.V2.cfg
+  222  vi SendRepeatOrders.py 
+  223  python3 SendRepeatOrders.py config/initiator.V2.cfg
+  224  vi SendRepeatOrders.py 
+  225  python3 SendRepeatOrders.py config/initiator.V2.cfg
+  226  history
+  227  tail -n 100 logs/oe/FIXT.1.1-4C001-ForecastEx.messages.log   | tr '\001' '|'
+  228  logs
+  229  ls logs
+  230  ls
+  231  ls log
+  232  ls -ltr log
+  233  tail log/F*
+  234  vi SendRepeatOrders.py 
+  235  python3 SendRepeatOrders.py config/initiator.V2.cfg
+  236  tail log/F*
+  237  vi SendRepeatOrders.py 
+  238  python3 SendRepeatOrders.py config/initiator.V2.cfg
+  239  vi SendRepeatOrders.py 
+  240  python3 SendRepeatOrders.py config/initiator.V2.cfg
+  241  vi SendRepeatOrders.py 
+  242  python3 SendRepeatOrders.py config/initiator.V2.cfg
+  243  vi SendRepeatOrders.py 
+  244  python3 SendRepeatOrders.py config/initiator.V2.cfg
+  245  vi SendRepeatOrders.py 
+  246  python3 SendRepeatOrders.py config/initiator.V2.cfg
+  247  vi SendRepeatOrders.py 
+  248  tail log/F*
+  249  history | grep tr
+  250  tail log/F* | tr '\001' '|'
+  251  history >goodhistory
+  252  vi SendRepeatOrders.py 
+  253  ls config
+  254  ls config/initiator.V2.cfg 
+  255  cat config/initiator.V2.cfg
+  256  ls config
+  257  pwd
+  258  vi config/initiator.V2.cfg
+  259  ls ./spec
+  260  qf
+  261  ls ./spec
+  262  ls spec
+  263  ls
+  264  cd ..
+  265  pwd
+  266  ls -ltr *
+  267  ls -ltr * | grep spec
+  268  ls -ltr * | grep FIX
+  269  ls -ltr */* | grep FIX
+  270  ls -ltr */*/* | grep FIX
+  271  cd pythonQF/
+  272  vi config/initiator.V2.cfg
+  273  ls
+  274  ls .swp
+  275  ls .*swp
+  276  ls .*.swp
+  277  ls
+  278  cd pythonQF/
+  279  ls .*.swp
+  280  ls .*swp
+  281  ls -ltr
+  282  vi SendRepeatOrders.py 
+  283  ls
+  284  grep python goodhistory 
+  285  python3 SendRepeatOrders.py config/initiator.V2.cfg
+  286  vi SendRepeatOrders.py 
+  287  python3 SendRepeatOrders.py config/initiator.V2.cfg
+  288  cd ..
+  289  find . -name "*FIX"
+  290  find . -name "*fix"
+  291  find . -name "*fix*"
+  292  find . -name "*fix*"  
+  293  find . -name "*fix*"  | grep py
+  294  cat ./.local/lib/python3.9/site-packages/quickfix50sp2.py
+  295  cat ./.local/lib/python3.9/site-packages/quickfix50sp2.py | grep Time
+  296  cat ./.local/lib/python3.9/site-packages/quickfix50sp2.py | grep TimeIn
+  297  cat ./.local/lib/python3.9/site-packages/quickfix50sp2.py | grep -C8 TimeIn
+  298  cat ./.local/lib/python3.9/site-packages/quickfix50sp2.py | more
+  299  pwd
+  300  vi .bashrc
+  301  source .bashrc
+  302  h
+  303  wc ./.local/lib/python3.9/site-packages/quickfix50sp2.py
+  304  tail ./.local/lib/python3.9/site-packages/quickfix50sp2.py
+  305  tail -50./.local/lib/python3.9/site-packages/quickfix50sp2.py
+  306  tail -50 ./.local/lib/python3.9/site-packages/quickfix50sp2.py
+  307  rp
+  308  vi .bashrc
+  309  source .bashrc
+  310  rp
+  311  grep Time *py
+  312  grep IMMEDIATE_OR_CANCEL *
+  313  h
+  314  cat ./.local/lib/python3.9/site-packages/quickfix50sp2.py | grep IMMEDIATE_OR_CANCEL
+  315  cat /.local/lib/python3.9/site-packages/quickfix50sp2.py | grep IMMEDIATE_OR_CANCEL
+  316  cat /local/lib/python3.9/site-packages/quickfix50sp2.py | grep IMMEDIATE_OR_CANCEL
+  317  cd 
+  318  ls
+  319  cat ./.local/lib/python3.9/site-packages/quickfix50sp2.py | grep IMMEDIATE_OR_CANCEL
+  320  cat ./.local/lib/python3.9/site-packages/*.py | grep IMMEDIATE_OR_CANCEL
+  321   grep IMMED ./.local/lib/python3.9/site-packages/*.py
+  322   grep DAY ./.local/lib/python3.9/site-packages/*.py
+  323   grep DAY ./.local/lib/python3.9/site-packages/*.py | grep Time
+  324   grep TimeIn ./.local/lib/python3.9/site-packages/*.py | grep Time
+  325  rp
+  326  ls
+  327  ls -ltr
+  328  vi SendRepeatOrders.py 
+  329  python3 SendRepeatOrders.py config/initiator.V2.cfg
+  330  vi SendRepeatOrders.py 
+  331  python3 SendRepeatOrders.py config/initiator.V2.cfg
+  332  vi SendRepeatOrders.py 
+  333  python3 SendRepeatOrders.py config/initiator.V2.cfg
+  334  vi SendRepeatOrders.py 
+  335  python3 SendRepeatOrders.py config/initiator.V2.cfg
+  336  rp
+  337  ls
+  338  ls -ltr
+  339  h > hist1
+  340  cp SendRepeatOrders.py OrderTesterV1.py
+  341  grep pytho hist1
+  342  python3 OrderTesterV1.py config/initiator.V2.cfg
+  343  ls 
+  344  cd logs
+  345  ls
+  346  ls -ltr
+  347  wc *
+  348  cd ..
+  349  cd log
+  350  ls
+  351  ls -ltr
+  352  wc *
+  353  cat config/initiator.V2.cfg
+  354  cat FIXT.1.1-4C001-ForecastEx.messages.current.log
+  355  ls
+  356  rp
+  357  ls
+  358  grep init hist1 
+  359  rp
+  360  grep pyth hist1 
+  361  python3 SendRepeatOrders.py config/initiator.V2.cfg
+  362  vi SendRepeatOrders.py
+  363  pwd
+  364  vi SendRepeatOrders.py
+  365  python3 SendRepeatOrders.py config/initiator.V2.cfg
+  366  vi SendRepeatOrders.py
+  367  python3 SendRepeatOrders.py config/initiator.V2.cfg
+  368  vi SendRepeatOrders.py
+  369  python3 SendRepeatOrders.py config/initiator.V2.cfg
+  370  vi SendRepeatOrders.py
+  371  python3 SendRepeatOrders.py config/initiator.V2.cfg
+  372  vi SendRepeatOrders.py
+  373  find -name . "quickfi"
+  374  find . -name "quick"
+  375  cd
+  376  find . -name "quick"
+  377  find . -name "*quick*"
+  378  cd ./.local/lib/python3.9/site-packages
+  379  ls
+  380  grep GOOD *
+  381  grep DAY * 
+  382  grep GOOD | grep Time
+  383  grep GOOD * | grep Time
+  384  grep DAY * | grep Time
+  385  rp
+  386  vi SendRepeatOrders.py
+  387  python3 SendRepeatOrders.py config/initiator.V2.cfg
+  388  vi SendRepeatOrders.py
+  389  python3 SendRepeatOrders.py config/initiator.V2.cfg
+  390  vi SendRepeatOrders.py
+  391  python3 SendRepeatOrders.py config/initiator.V2.cfg
+  392  vi SendRepeatOrders.py
+  393  python3 SendRepeatOrders.py config/initiator.V2.cfg
+  394  vi SendRepeatOrders.py
+  395  python3 SendRepeatOrders.py config/initiator.V2.cfg
+  396  ls
+  397  log
+  398  cd log
+  399  ls
+  400  more rpapp.log
+  401  cd ..
+  402  pwd
+  403  vi viewlogs.sh
+  404  chmod +x viewlogs.sh 
+  405  ./viewlogs.sh 
+  406  cat log/FIXT.1.1-4C001-ForecastEx.messages.current.log
+  407  cat log/FIXT.1.1-4C001-ForecastEx.messages.current.log | cut -c1-88
+  408  ./viewlogs.sh 
+  409  vi viewlogs.sh
+  410  grep tr hist1 
+  411  vi viewlogs.sh
+  412  ./viewlogs.sh 
+  413  vi viewlogs.sh
+  414  ./viewlogs.sh 
+  415  vi viewlogs.sh
+  416  ./viewlogs.sh 
+  417  rp
+  418  ls
+  419  ./viewlogs.sh 
+  420  ./viewlogs.sh  | grep 4f45
+  421  ./viewlogs.sh  | grep 4f45 | awk '{print $1}
+  422  ./viewlogs.sh  | grep 4f45 | awk '{print $1}'
+  423  vi ./viewlogs.sh 
+  424  ./viewlogs.sh  
+  425  vi ./viewlogs.sh 
+  426  ./viewlogs.sh  
+  427  vi ./viewlogs.sh 
+  428  ./viewlogs.sh  
+  429  vi ./viewlogs.sh 
+  430  ./viewlogs.sh  
+  431  vi ./viewlogs.sh 
+  432  ./viewlogs.sh  
+  433  vi ./viewlogs.sh 
+  434  ./viewlogs.sh  
+  435  vi ./viewlogs.sh 
+  436  ./viewlogs.sh  
+  437  vi ./viewlogs.sh 
+  438  ./viewlogs.sh  
+  439  vi ./viewlogs.sh 
+  440  ./viewlogs.sh  
+  441  vi ./viewlogs.sh 
+  442  ./viewlogs.sh  
+  443  cd
+  444  grep alias .b*
+  445  rp
+  446  grep pyth hist1 
+  447  vi SendRepeatOrders.py
+  448  h
+  449  python3 OrderTesterV1.py config/initiator.V2.cfg
+  450  vi SendRepeatOrders.py
+  451  python3 SendRepeatOrders.py config/initiator.V2.cfg
+  452  ./viewlogs.sh  
+  453  rp
+  454  ls
+  455  ll
+  456  ls -ltr
+  457  cat SendRepeatOrders.py
+  458  vi cancelOne.py
+  459  python3 CancelOneOrder.py config/initiator.V2.cfg   --orig-clordid CL-2b3c1a0e-7d8a-4fe0-8a46-1a2b3c4d5e6f   --symbol CBBTC_123125_65000   --side buy   --account YOUR_ACCOUNT   --security-subtype YES
+  460  cp cancelOne.py CancelOneOrder.py
+  461  python3 CancelOneOrder.py config/initiator.V2.cfg   --orig-clordid CL-2b3c1a0e-7d8a-4fe0-8a46-1a2b3c4d5e6f   --symbol CBBTC_123125_65000   --side buy   --account YOUR_ACCOUNT   --security-subtype YES
+  462  rp
+  463  ls
+  464  history 
+  465  python3 SendRepeatOrders.py config/initiator.V2.cfg
+  466  rp
+  467  pwd
+  468  ls
+  469  ls -ltr
+  470  df -h
+  471  grep pytho hist1 
+  472  python3 SendRepeatOrders.py config/initiator.V2.cfg
+  473  ls
+  474  vi SendRepeatOrders.py 
+  475  python3 SendRepeatOrders.py config/initiator.V2.cfg
+  476  ./viewlogs.sh 
+  477  python3 SendRepeatOrders.py config/initiator.V2.cfg
+  478  vi SendRepeatOrders.py 
+  479   python3 SendRepeatOrders.py config/initiator.V2.cfg
+  480  rp
+  481  h
+  482  ls
+  483  ls -ltr
+  484  rm sendOrder.py runpyorder.sh
+  485  cd log
+  486  ls
+  487  more rpapp.log
+  488  ls
+  489  rp
+  490  ls
+  491  history
+  492  python3 SendRepeatOrders.py config/initiator.V2.cfg
+  493  ./viewlogs.sh  
+  494  rp
+  495  ./viewlogs.sh  
+  496  python3 SendRepeatOrders.py config/initiator.V2.cfg
+  497  rp
+  498  vi SendRepeatOrders.py 
+  499  python3 SendRepeatOrders.py config/initiator.V2.cfg
+  500  rp
+  501  python3 SendRepeatOrders.py config/initiator.V2.cfg
+  502  rp
+  503  vi SendRepeatOrders.py 
+  504  python3 SendRepeatOrders.py config/initiator.V2.cfg
+  505  rp
+  506  ls
+  507  h
+  508  cp SendRepeatOrders.py LatencyTest1_100k_YES.py
+  509  cp SendRepeatOrders.py LayerBook_Lower45.py
+  510  vi  LatencyTest1_100k_YES.py
+  511  python3 LatencyTest1_100k_YES.py config/initiator.V2.cfg
+  512  h
+  513   ./viewlogs.sh
+  514  ls -ltr
+  515  vi LayerBook_Lower45.py
+  516  cp  LayerBook_Lower45.py MasterSendOrders.py
+  517  python3 MasterSendOrders.py config/initiator.V2.cfg 
+  518  ls
+  519  viewlogs.sh
+  520  ./viewlogs.sh
+  521  rp
+  522  ls log
+  523  ls -ltr log/*
+  524  rp log/FIXT.1.1-4C001-ForecastEx.messages.current.log
+  525  rm log/rpapp.log
+  526  ls -ltr log/*
+  527  rm  log/*
+  528  ls
+  529  vi MasterSendOrders.py 
+  530  python3 MasterSendOrders.py config/initiator.V2.cfg
+  531  h
+  532  ./viewlogs.sh
+  533  df -h
+  534  qf
+  535  df -h
+  536  lsblk
+  537  df -h 
+  538  lsblk
+  539  sudo growpart /dev/xvda 1
+  540  sudo xfs_growfs -d /
+  541  aws ec2 create-snapshot --volume-id vol-0cd763c26263fe038 --description "pre-resize backup"
+  542  aws configure sso
+  543  ls -ltr
+  544  exit
+  545  cd jf
+  546  jf
+  547  qf
+  548  aws configure sso
+  549  exit
+  550  aws sts get-caller-identity --profile ExchangePRODAdminAccess-352215264726
+  551  aws sts get-caller-identity
+  552  aws cofigure
+  553  aws cofigure sso
+  554  aws configure sso
+  555  exit
+  556  qf
+  557  mvn -q -DskipTests -P single exec:java -Dexec.mainClass=perf.LoadInitiator -Dexec.args="configs/initiator_oe.cfg SUBMIT_ONLY
+  558  totalrps=1 durationsec=1 yesno=YES price=0.50 symbol=CBBTC_123125_142500 accountname=Ronaldo orderquantity=100"
+  559  pqf
+  560  rp
+  561  python3 SendRepeatOrders.py config/initiator.V2.cfg 
+  562  git init
+  563  git add .
+  564  git commit -m "Initial commit of PY-FIXPerformanceTester"
+  565  git remote add origin https://github.com/ForecastEx/PY-FIXPerformanceTester.git
+  566  git remote -v
+  567  git push -u origin main
+  568  git push -u origin master
+  569  git config --global user.name
+  570  git config --global user.email
+  571  git push -u origin master
+  572  git config --global user.name
+  573  git config --global user.email
+  574  git push -u origin master
+  575  git config --global user.name "rrrosseland"
+  576  git config --global user.name
+  577  git config --global user.email
+  578  git push -u origin master
+  579  git remote add orgin git@github.com:ForecastEx/PY-FIXPerformanceTester.git
+  580  git push -u origin master
+  581  git remote add origin git@github.com:ForecastEx/PY-FIXPerformanceTester.git
+  582  git push -u origin master
+  583  REMOTE_URL=$(git remote get-url origin)
+  584  git credential reject
+  585  protocol=https
+  586  host=github.com
+  587  path=/ForecastEx/PY-FIXPerformanceTester.git
+  588  cat ~/.git-credentials
+  589  ssh-keygen -t rsa -b 4096 -C "rrosseland@4castex.com"
+  590  git remote set-url origin git@github.com:ForecastEx/PY-FIXPerformanceTester.git
+  591  git push -u origin master
+  592  git push -u origin main
+  593  git push -u origin master
+  594  git status
+  595  h
+  596  ls -ltr config/
+  597  vi config/initiator_oe.cfg
+  598  git status
+  599  git pull original master
+  600  git add .
+  601  git commit -m "Updated test cfg file for confirmation of git push"
+  602  git push
+  603  ls -ltr
+  604  ls -ltr config/
+  605  ls -lte
+  606  ls -ltr
+  607  cd log
+  608  ls -ltr
+  609  qf
+  610  df -h 
+  611  qf
+  612  lsblk
+  613  df -h --output=pcent,target | awk 'NR>1{gsub(/%/,""); if($1+0>75) print "⚠️  Disk " $2 " is " $1 "% full!"; else print "✅  Disk " $2 " is healthy (" $1 "%)."}'
+  614  vi checkharddriveusage.sh
+  615  ./checkharddriveusage.sh
+  616  chmod +x checkharddriveusage.sh 
+  617  ./checkharddriveusage.sh
+  618  vi checkharddriveusage.sh
+  619  ./checkharddriveusage.sh
+  620  exit
+  621  rp
+  622  ls
+  623  ls -ltr
+  624  mkdir old
+  625  mv sendLimitGTCOrder.py LoadInitiator.java OrderCore.java TradeInitiator.java old
+  626  ls
+  627  mv GTCVerbose.py LatencyTest1_100k_YES.py OrderTesterV1.py old
+  628  ls
+  629  mv docker_summary.sh LayerBook_Lower45.py old
+  630  ls
+  631  cd config
+  632  ls
+  633  cp  initiator.V2.cfg sendOrder.cfg
+  634  mkdir old
+  635  ls 
+  636  ls old
+  637  ls
+  638  mv initiator_oe.cfg acceptor.cfg old
+  639  ls
+  640  mv  initiator_oe42.cfg old
+  641  ls
+  642  cd
+  643  rp
+  644  ls
+  645  vi MasterSendOrders.py
+  646  h
+  647  python3 MasterSendOrders.py sendOrder.cfg
+  648  python3 MasterSendOrders.py config/sendOrder.cfg
+  649  ls
+  650  viewlogs.sh
+  651  ./viewlogs.sh
+  652  vi viewlogs.sh
+  653  ls log
+  654  wc log/*
+  655  head log/FIXT.1.1-4C001-ForecastEx.messages.current.log
+  656  wc log/*
+  657  vi viewlogs.sh
+  658  ./viewlogs.sh
+  659  vi viewlogs.sh
+  660  ./viewlogs.sh
+  661  vi viewlogs.sh
+  662  ./viewlogs.sh
+  663  vi viewlogs.sh
+  664  ./viewlogs.sh
+  665  rp
+  666  ls
+  667  vi 
+  668  vi viewlogs.sh 
+  669  ./viewlogs.sh 
+  670  vi viewlogs.sh 
+  671  ./viewlogs.sh 
+  672  vi viewlogs.sh 
+  673  ./viewlogs.sh 
+  674  vi viewlogs.sh 
+  675  ./viewlogs.sh 
+  676  vi viewlogs.sh 
+  677  ./viewlogs.sh 
+  678  vi viewlogs.sh 
+  679  ./viewlogs.sh 
+  680  vi viewlogs.sh 
+  681  ./viewlogs.sh 
+  682  ls
+  683  cd log
+  684  ls
+  685  more FIXT.1.1-4C001-ForecastEx.messages.current.log
+  686  cat FIXT.1.1-4C001-ForecastEx.messages.current.log | cut -c1-55
+  687  vi viewlogs.sh 
+  688  rp
+  689  vi viewlogs.sh 
+  690  rp
+  691  ls .*swp
+  692  ls
+  693  ls -ltr
+  694  vi viewlogs.sh
+  695  ./viewlogs.sh
+  696  vi viewlogs.sh
+  697  ./viewlogs.sh
+  698  ls -ltr
+  699  nano ~/.bashrc
+  700  kk
+  701  vi ~/.bashrc
+  702  source ~/.bashrc
+  703  kk
+  704  cd pythonQF/
+  705  kk
+  706  cat justtimestamps1
+  707  cat allmessages 
+  708  cat f11piped
+  709  df -h
+  710  exit
+  711  ls
+  712  rp
+  713  ls
+  714  ls -ltr
+  715  viewlogs.sh
+  716  ./viewlogs.sh
+  717  ls
+  718  mkdir javafiles
+  719  mv *.java javafiles/
+  720  ls
+  721  vi MasterSendOrders.py
+  722  ls config
+  723  vi MasterSendOrders.py
+  724  mkdir backups
+  725  cp MasterSendOrders.py backups/MasterSendOrders.py.20251014
+  726  cp viewlogs.sh backups/viewlogs.sh.20251014
+  727  mkdir junk
+  728  mv f11piped junk/
+  729  ls
+  730  ls -ltr
+  731  cp CancelOneOrder.py backups/CancelOneOrder.py.20251014
+  732  rm cancelOne.py cancelOneOrder.py
+  733  ls
+  734  diff SendRepeatOrders.py FIXLatencyTester.py 
+  735  ls
+  736  python MasterSendOrders.py config/sendOrder.cfg 
+  737  vi MasterSendOrders.py
+  738  python3 MasterSendOrders.py config/sendOrder.cfg 
+  739  vi MasterSendOrders.py
+  740  python3 MasterSendOrders.py config/sendOrder.cfg 
+  741  vi MasterSendOrders.py
+  742  python3 MasterSendOrders.py config/sendOrder.cfg 
+  743  vi MasterSendOrders.py
+  744  grep Session *
+  745  grep Session backups/*
+  746  vi MasterSendOrders.py
+  747  python3 MasterSendOrders.py config/sendOrder.cfg 
+  748  vi MasterSendOrders.py
+  749  python3 MasterSendOrders.py config/sendOrder.cfg 
+  750  vi MasterSendOrders.py
+  751  python3 MasterSendOrders.py config/sendOrder.cfg 
+  752  vi MasterSendOrders.py
+  753  python3 MasterSendOrders.py config/sendOrder.cfg 
+  754  cat ~/.bashrc
+  755  rp
+  756  h
+  757   git init
+  758    874  git add .
+  759    875  git commit -m "Second commit of Python version of FIXPerformanceTester"
+  760    876  git remote add origin https://github.com/ForecastEx/PY-FIXPerformanceTester.git
+  761    877  git remote -v
+  762    878  git push -u origin main
+  763  git stauts
+  764  git status
+  765  git add .
+  766  git commit -m "Second commit of Python version of FIXPerformanceTester"
+  767   git remote -v
+  768   git push -u origin main
+  769   git push -u origin master
+  770  h | grep py*
+  771  python3 SendRepeatOrders.py config/initiator.V2.cfg 
+  772  git status
+  773  kk
+  774  cat viewlogs.sh
+  775  kk logs/
+  776  tail logs/rpapp.log
+  777  git status
+  778  h | grep git 
+  779  git add .
+  780  git commit -m "starting the FIX Latency Tester"
+  781  git push - u origin master
+  782  git push -u origin master
+  783  h | grep pyton3
+  784  h | grep python
+  785  python3 MasterSendOrders.py config/sendOrder.cfg
+  786  kk
+  787  find . -name spec
+  788  find . -name "spec"
+  789  find . -name=spec
+  790  find . -name spec
+  791  kk config/
+  792  python3 MasterSendOrders.py config/sendOrder.cfg
+  793  python3 FIXLatencyTester.py config/sendOrder.cfg
+  794  sed -i "s/SocketInitiitor/SocketInitiator/" /home/ec2-user/pythonQF/FIXLatencyTester.py
+  795  sed -i "/SocketInitiator(app, store, settings, logs).*/{n; s/^.*SocketInitiator.*$//;}" /home/ec2-user/pythonQF/FIXLatencyTester.py
+  796  python3 FIXLatencyTester.py config/sendOrder.cfg
+  797  head -n 5 /home/ec2-user/pythonQF/data/latency.csv
+  798  ls -lh /home/ec2-user/pythonQF/data/latency.csv
+  799  tail -n 5 /home/ec2-user/pythonQF/data/latency.csv
+  800  awk -F',' 'NR>1 {sum+=$6; a[NR]=$6} END {
+  801    n=NR-1;
+  802    if(n>0){
+  803      asort(a);
+  804      printf "n=%d  mean=%.3fms  p50=%.3fms  p90=%.3fms  p99=%.3fms  max=%.3fms\n",
+  805        n, sum/n, a[int(n*0.5)], a[int(n*0.9)], a[int(n*0.99)], a[n]
+  806    } else { print "No rows yet." }
+  807  }' /home/ec2-user/pythonQF/data/latency.csv
+  808  python3 latency_summary.py
+  809  python3 latency_summary2.py
+  810  python3 FIXLatencyTester.py config/sendOrder.cfg
+  811  python3 FIXLatencyTester.py config/sendOrder.cfg 
+  812  python3 FIXLatencyTester.py config/sendOrder.cfg latency
+  813  python3 MasterSendOrders.py config/sendOrder.cfg latency
+  814  python3 MasterSendOrders.py config/sendOrder.cfg Latency
+  815  rp
+  816  h
+  817  ls
+  818  vi MasterSendOrders.py
+  819  python3 MasterSendOrders.py config/sendOrder.cfg 
+  820  vi MasterSendOrders.py
+  821  ls -ltr config/
+  822  cd config/
+  823  diff initiator.V2.cfg sendOrder.cfg 
+  824  ls ./spec
+  825  ls
+  826  cd ..
+  827  python3 MasterSendOrders.py config/sendOrder.cfg 
+  828  grep "pass was not" *
+  829  vi MasterSendOrders.py 
+  830  exit
+  831  ls
+  832  rp
+  833  ls
+  834  vi MasterSendOrders.py
+  835  ls
+  836  python3 MasterSendOrders.py config/sendOrder.cfg latency
+  837  vi MasterSendOrders.py
+  838  python3 MasterSendOrders.py config/sendOrder.cfg latency
+  839  vi MasterSendOrders.py
+  840  python3 MasterSendOrders.py config/sendOrder.cfg latency
+  841  ls
+  842  cp MasterSendOrders.py MasterSendOrders.RPVersion.py
+  843  cd __pycache__
+  844  ls
+  845  vi MasterSendOrders.py
+  846  ls
+  847  cd ..
+  848  ls
+  849  vi MasterSendOrders.py
+  850  viewlogs.sh
+  851  ./viewlogs.sh
+  852  qf
+  853  cd ..
+  854  rp
+  855  ls -ltr
+  856  python3 latency_summary2.py
+  857  vi oldversionSendRepeatorders.py
+  858  python3 oldversionSendRepeatorders.py config/initiator.V2.cfg
+  859  python3 FIXLatencyTester.py 
+  860  python3 FIXLatencyTester.py  initiator.V2.cfg
+  861  history | grep git
+  862  ls -ltr
+  863  rp
+  864  git status
+  865  ls
+  866  history | grep git
+  867  rp
+  868  python3 MasterSendOrders.py config/sendOrder.cfg latency
+  869  kk @.py
+  870  kk 
+  871  python3 latency2.py
+  872  python3 latency_summary2.py
+  873  cat ~/.bashrc
+  874   history | grep source
+  875  rp
+  876  rp
+  877  python3 pull_fix_sample.py   --group "/aws/containerinsights/forecastex-uat/application"   --minutes 60   --pattern "8=FIX"   --max 200   --out fix_sample.jsonl
+  878  python3 -m pip install --user boto3 >/dev/null 2>&1 || true
+  879  python3 pull_fix_sample.py   --group "/aws/containerinsights/forecastex-uat/application"   --minutes 60   --pattern "8=FIX"   --max 200   --out fix_sample.json
+  880  python3 pull_fix_sample.py --region us-east-1 --group "/aws/containerinsights/forecastex-uat/application"   --minutes 60   --pattern "8=FIX"   --max 200   --out fix_sample.json
+  881  python3 pull_fix_sample.py   --group "/aws/containerinsights/forecastex-uat/application"   --minutes 60   --pattern "8=FIX"   --max 200   --out fix_sample.jsonl
+  882  python3 pull_fix_sample.py   --group "/aws/containerinsights/forecastex-uat/application"   --minutes 60 --pattern "8=FIX" --max 200 --out fix_sample.jsonl   --region us-east-1
+  883  ls
+  884  kk
+  885  cd pythonQF/
+  886  history | grep python
+  887  python3 MasterSendOrders.py config/sendOrder.cfg latency python3 oldversionSendRepeatorders.py config/initiator.V2.cf
+  888   python3 oldversionSendRepeatorders.py config/initiator.V2.cfg
+  889  cat oldversionSendRepeatorders.py
+  890   python3 oldversionSendRepeatorders.py config/initiator.V2.cfg
+  891  exit
+  892  kk
+  893  qf
+  894  rp
+  895  history tail
+  896  history grep tail
+  897  history | grep tail
+  898  history | tail
+  899  python3 MasterSendOrders.py config/sendOrder.cfg latency
+  900  history | grep python3
+  901  python3 FIXLatencyTester.py  initiator.V2.cfg
+  902  python3 oldversionSendRepeatorders.py config/initiator.V2.cfg
+  903  vi oldversionSendRepeatorders.py
+  904  python3 oldversionSendRepeatorders.py config/initiator.V2.cfg
+  905  ls -l
+  906  cat latency_summary2.py
+  907  rp
+  908  ls
+  909  ls -ltr
+  910  more FIXLatencyTester.py 
+  911  ls -ltr
+  912  diff MasterSendOrders.py MasterSendOrders.RPVersion.py
+  913  ls
+  914  viMasterSendOrders.RPVersion.py
+  915  vi MasterSendOrders.RPVersion.py
+  916  MasterSendOrders.RPVersion.py config/sendOrder.cfg 
+  917  python3 MasterSendOrders.RPVersion.py config/sendOrder.cfg 
+  918  vi MasterSendOrders.RPVersion.py
+  919  python3 MasterSendOrders.RPVersion.py config/sendOrder.cfg 
+  920  kk
+  921  qf
+  922  ls -l
+  923  rp
+  924  history | grep python3
+  925  python3 oldversionSendRepeatorders.py config/initiator.V2.cfg
+  926  history | grep python3
+  927  history | grep git
+  928  git status
+  929    859  git add .
+  930    860  git commit -m "Second commit of Python version of FIXPerformanceTester"
+  931    861   git remote -v
+  932    862   git push -u origin main
+  933  vi basicCWLoggerParser.py
+  934  kk logs/
+  935  vi basicCWLoggerParser.py
+  936  cd logs
+  937  vi basicCWLoggerParser.py
+  938  kk
+  939  rm basicCWLoggerParser.py 
+  940  vi fix_clean.txt
+  941  vi fix_sorted.txt
+  942  rm fix_sorted.txt
+  943  kk
+  944  vi fix_sorted.txt
+  945  kk
+  946  python3 oldversionSendRepeatorders.py config/initiator.V2.cfg
+  947  cd ..
+  948  python3 oldversionSendRepeatorders.py config/initiator.V2.cfg
+  949  exit
+  950  exut
+  951  exit
+  952  kk
+  953  cd pythonQF/
+  954  kk
+  955  vi bashSearchLoggerInsights.sh
+  956  chmod +x bashSearchLoggerInsights.sh
+  957  ./bashSearchLoggerInsights.sh
+  958  vi bashSearchLoggerInsights.sh
+  959  ./bashSearchLoggerInsights.sh
+  960  kk
+  961  python3 basicCWLoggerParser.py 
+  962  history | grep python
+  963  kk
+  964  cd logs/
+  965  pwd
+  966  python3 basicCWLoggerParser.py
+  967  cd ..
+  968  python3 basicCWLoggerParser.py
+  969  python3 advancedCWLoggerParser.py
+  970  sudo pip3 install pandas matplotlib
+  971  python3 -m venv ~/venv-fix
+  972  source ~/venv-fix/bin/activate
+  973  pip install --upgrade pip
+  974  pip install pandas matplotlib
+  975  sudo pip3 install "python-dateutil<=2.9.0"
+  976  sudo pip3 install "python-dateutil<=2.9.0"python3 advancedCWLoggerParser.py
+  977  python3 advancedCWLoggerParser.py
+  978  kk logs/
+  979  tail FIXT.1.1-4C001-ForecastEx.messages.current.log
+  980  tail logs/FIXT.1.1-4C001-ForecastEx.messages.current.log
+  981  python3 advancedCWLoggerParser.py
+  982  ls -ltr logs/
+  983  cd logs/
+  984  vi fix_raw.json
+  985  cd ..
+  986  python3 advancedCWLoggerParser.py
+  987  python3 cw_fix_latency.py /home/ec2-user/scripts/logs/fix_raw.json --first-response-only   --pairs /home/ec2-user/scripts/logs/fix_latency_pairs.csv   --summary /home/ec2-user/scripts/logs/fix_latency_summary.csv
+  988  kk logs/
+  989  python3 advancedCWLoggerParser.py  /home/ec2-user/scripts/logs/fix_raw.json --first-response-only   --pairs /home/ec2-user/scripts/logs/fix_latency_pairs.csv   --summary /home/ec2-user/scripts/logs/fix_latency_summary.csv
+  990  kk logs/
+  991  cd logs
+  992  pwd
+  993  python3 advancedCWLoggerParser.py  /home/ec2-user/pythonQF/logs/fix_raw.json --first-response-only   --pairs /home/ec2-user/pythonQF/logs/fix_latency_pairs.csv   --summary /home/ec2-user/pythonQF/logs/fix_latency_summary.csv
+  994  cd ..
+  995  python3 advancedCWLoggerParser.py  /home/ec2-user/pythonQF/logs/fix_raw.json --first-response-only   --pairs /home/ec2-user/pythonQF/logs/fix_latency_pairs.csv   --summary /home/ec2-user/pythonQF/logs/fix_latency_summary.csv
+  996  grep -n -- '--first-response-only' advancedCWLoggerParser.py   | xargs -I{} sed -n '{}p' advancedCWLoggerParser.py
+  997  grep -n -- '--first-response-only' advancedCWLoggerParser.py   | xargs -I{} sed -n '{}p' advancedCWLoggerParser.py
+  998  python3 advancedCWLoggerParser.py   /home/ec2-user/pythonQF/logs/fix_raw.json   --first-response-only   --pairs /home/ec2-user/pythonQF/logs/fix_latency_pairs.csv   --summary /home/ec2-user/pythonQF/logs/fix_latency_summary.csv
+  999  python3 advancedCWLoggerParser.py   /home/ec2-user/pythonQF/logs/fix_raw.json   --first-response-only   --pairs /home/ec2-user/pythonQF/logs/fix_latency_pairs.csv   --summary /home/ec2-user/pythonQF/logs/fix_latency_summary.csv
+ 1000  exit
+ 1001  rp
+ 1002  clear
+ 1003  h > ronhistory

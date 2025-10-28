@@ -1,47 +1,54 @@
 #!/usr/bin/env python3
-import time, uuid, threading, re, pytz
+import time, uuid, threading, re, pytz, sys
+import quickfix as fix
+import quickfix50sp2 as fix50sp2
 from pathlib import Path
 from datetime import datetime
+rpdir = Path("/home/ec2-user/pythonQF")
+################################
+#trademode = "layerLower45"
+trademode = "latencyTest"
+#trademode = "repeatOrders"
 
-# rpdir can start as a string or a Path—make it a Path either way
-rpdir = Path("/home/ec2-user/pythonQF")          # or Path.home(), Path.cwd(), etc.
+if trademode == "layerLower45":
+    PRICE   = 0.01
+    QTY = 1
+    maxloop = 47
+    incr = 0.01
+if trademode == "latencyTest":
+    PRICE   = 0.51
+    QTY = 1
+    maxloop = 400
+    incr = 0.0
+if trademode == "repeatOrders":
+    PRICE   = 0.51
+    QTY = 1
+    maxloop = 40
+    incr = 0.0
+
 # Build child paths
 data_dir = rpdir / "data"
 log_file = rpdir / "logs" / "app.log"
 rplog_file = rpdir / "logs" / "rpapp.log"
-import quickfix as fix
-import quickfix50sp2 as fix50sp2
-
-#------------definition of variables
-#...................................
-tif            ="GOOD_TILL_CANCEL"
-#tif             ="TimeInForce_DAY"
-
-SENDER_SUB_ID  = "4C001"   # EP3 user/trader (tag 50) – header on app messages only
+SENDER_SUB_ID  = "4C001"
 # ACCOUNT      = "yesRonaldo"
 # ACCOUNT      = "noRonaldo"
 # ACCOUNT      = "yesTippy"
 ACCOUNT        = "noTippy"
-#SYMBOL        = "CBBTC_123125_65000"
 #SYMBOL        = "CBBTC_123125_142500"
 #SYMBOL        = "MNYCG_110425_Mamdani" 
 SYMBOL         = "CBBTC_123125_132500"
 SecSubType     = "NO"
-#SecSubType     = "YES"
 SIDE_BUY       = True  # set False for sell
-QTY            = 1
-maxloop = 400
-PRICE   = 0.51
-incr = 0.00
 
 class App(fix.Application):
     def __init__(self):
         super().__init__()
         self.session_id = None
         self.sent = False
-
-    # lifecycle - required for QuickFix: onCreate, onLogon, onLogout, toAdmin, fromAdmin, toApp & fromApp
-    def onCreate(self, sid): pass
+        
+    def onCreate(self, sid):
+        print(f"pass was not working")
     
     def onLogon(self, sid):
         # Get current time in UTC and EST
@@ -86,14 +93,12 @@ class App(fix.Application):
         print("[APP]", msg.toString())
         # Open file in append mode
         with rplog_file.open("a", encoding="utf-8") as f:
-            f.write(msg.toString() + "\n")
+            f.write(msg.toString() + "\n")   
 
-# Make sure directories exist (optional)
-#data_dir.mkdir(parents=True, exist_ok=True)
-#log_file.parent.mkdir(parents=True, exist_ok=True)
-
-    # send one GTC limit order - GTC (Good 'Til Canceled) limit order
-    def send_gtc_limit(self, symbol, buy, qty, price, SecSubType, account=None):
+	# Make sure directories exist (optional)
+	#data_dir.mkdir(parents=True, exist_ok=True)
+	#log_file.parent.mkdir(parents=True, exist_ok=True)
+    def send_limit(self, symbol, buy, qty, price, SecSubType, account=None):
         nos = fix50sp2.NewOrderSingle()
         nos.setField(fix.ClOrdID("CL-" + str(uuid.uuid4())))              # 11
         if account: nos.setField(fix.Account(account))                     # 1
@@ -104,14 +109,16 @@ class App(fix.Application):
         nos.setField(fix.OrderQty(float(qty)))                             # 38
         nos.setField(fix.Price(float(price)))                              # 44
         nos.setField(fix.CustOrderCapacity(1))                             # 582 = 5 (RETAIL
-        nos.setField(fix.AccountType(1))                  # 581 (if req
-        nos.setField(fix.SecuritySubType(SecSubType))                  # 762 (if req
-        nos.setField(fix.TimeInForce(fix.TimeInForce_GOOD_TILL_CANCEL))    # 59=1 (GTC)
-        #nos.setField(fix.TimeInForce(fix.(tif.toString())))    # DAY 59=0 (DAY)
+        nos.setField(fix.AccountType(1))                                   # 581 
+        nos.setField(fix.SecuritySubType("SecSubType"))                    # 762 Required for YES NO
+        tif = "TimeInForce_GOOD_TILL_CANCEL"
+        tif = "TimeInForce_DAY" ###to move tif outside this def, need to add as a param of def ##
+        #nos.setField(fix.TimeInForce(fix.TimeInForce_GOOD_TILL_CANCEL))   # 59=1 (GTC)
+        nos.setField(fix.TimeInForce(fix.(tif.toString())))    # DAY 59=0 (DAY)
         #nos.setField(fix.TimeInForce(fix.TimeInForce_DAY))    # DAY 59=0 (DAY)
         #nos.setField(fix.TimeInForce(0))    # 59=1 (GTC) and DAY = 0 THIS DOES NOT WORK!!!
         ok = fix.Session.sendToTarget(nos, self.session_id)
-        print(f"[SEND] GTC LIMIT {symbol} {('BUY' if buy else 'SELL')} {qty} @ {price} {SecSubType} -> {ok}")
+        #print(f"[SEND] GTC LIMIT {symbol} {('BUY' if buy else 'SELL')} {qty} @ {price} {SecSubType} -> {ok}")
         msgstrrp = (f"[SEND] GTC LIMIT {symbol} {('BUY' if buy else 'SELL')} {qty} @ {price} {SecSubType} -> {ok}")
         with rplog_file.open("a", encoding="utf-8") as f:
             f.write(msgstrrp + "\n")
@@ -125,18 +132,28 @@ def main(cfg):
     init.start()
     #### DAY ORDERS will get CXLD upon sesson logout. GTC will persist
     try:
-        # wait for logon then fire one order
+        # wait for logon then fire orders
         while app.session_id is None: time.sleep(0.1)
         i = 1
         NEWPRICE  = PRICE 
         # layer up the lower half of book, then the upper half or start at 99 and go down in increm
         while i <= maxloop :
             NEWPRICE  =  NEWPRICE + incr
-            SecSubType = "YES"
-            app.send_gtc_limit(SYMBOL, SIDE_BUY, QTY, NEWPRICE, SecSubType, ACCOUNT)
-            SecSubType = "NO"
-            app.send_gtc_limit(SYMBOL, SIDE_BUY, QTY, NEWPRICE, SecSubType, ACCOUNT)
-            time.sleep(0.01)
+            if trademode == "latencyTest":
+                #SecSubType = "YES"
+                SecSubType = "NO"
+                app.send_limit(SYMBOL, SIDE_BUY, QTY, NEWPRICE, SecSubType, ACCOUNT)
+            elif trademode == "layerLower45s":
+                SecSubType = "YES"
+                app.send_limit(SYMBOL, SIDE_BUY, QTY, NEWPRICE, SecSubType, ACCOUNT)
+                SecSubType = "NO"
+                app.send_limit(SYMBOL, SIDE_BUY, QTY, NEWPRICE, SecSubType, ACCOUNT)
+            else:
+                SecSubType = "YES"
+                app.send_limit(SYMBOL, SIDE_BUY, QTY, NEWPRICE, SecSubType, ACCOUNT)
+                SecSubType = "NO"
+                app.send_limit(SYMBOL, SIDE_BUY, QTY, NEWPRICE, SecSubType, ACCOUNT)
+            time.sleep(0.00001)
             print(i)
             i += 1
         # keep session alive to receive ExecReports
@@ -147,7 +164,17 @@ def main(cfg):
         init.stop()
 
 if __name__ == "__main__":
-    import sys
-    if len(sys.argv)!=2:
-        print("Usage: python ep3_limit_gtc.py initiator.cfg"); raise SystemExit(1)
-    main(sys.argv[1])
+    if len(sys.argv) < 2:
+        print("Usage: python3 MasterSendOrders.py initiator.cfg [Latency]")
+        raise SystemExit(1)
+
+    cfg = sys.argv[1]
+    mode = sys.argv[2].lower() if len(sys.argv) >= 3 else ""
+
+    if mode == "latency":
+        print("[MODE] Launching FIXLatencyTester...")
+        import FIXLatencyTester
+        FIXLatencyTester.main(cfg)
+    else:
+        print("[MODE] Launching MasterSendOrders default mode...")
+        main(cfg)

@@ -1,0 +1,30 @@
+9,10c9,10
+< #trademode = "latencyTest"
+< #trademode = "layerLower45s"
+---
+> trademode = "repeatOrders"
+> trademode = "repeatOrders"
+26,27c26,27
+< #ACCOUNT = "yesRonaldo"
+< # ACCOUNT = "noRonaldo"
+---
+> # ACCOUNT = "yesRonaldo"
+> ACCOUNT = "noRonaldo"
+29c29
+< ACCOUNT = "yesTippy"
+---
+> #ACCOUNT = "yesTippy"
+34,37c34,35
+< #SYMBOL = "CBBTC_123125_65000"
+< 
+< SecSubType = "YES"
+< # SecSubType = "NO"
+---
+> #SecSubType = "YES"
+> SecSubType = "NO"
+130d127
+<     print("trade mode = ", {trademode})
+140c137
+<                 SecSubType = "YES"
+---
+>                 #SecSubType = "YES"
