@@ -72,6 +72,22 @@ class App(fix.Application):
         self.logged_on = False
         print(f"[onLogout] Logged out: {sid}")
         # keep the last session_id so we can re-use on reconnect if needed to hold the logout...
+    
+    def logout_and_stop(app, init, wait_secs=5):
+        #this makes the CTRL+C close cleanly because we never call onLogout due to it's requirement with QuickFIX
+    try:
+        if app.session_id:
+            sess = fix.Session.lookupSession(app.session_id)
+            if sess:
+                sess.logout("Client requested shutdown")
+        t0 = time.time()
+        while app.logged_on and (time.time() - t0) < wait_secs:
+            time.sleep(0.1)
+    finally:
+        try:
+            init.stop()
+        except Exception as e:
+            print(f"[WARN] init.stop() raised: {e}", file=sys.stderr)
 
     def toAdmin(self, msg, sid):
         mt = fix.MsgType(); msg.getHeader().getField(mt)
