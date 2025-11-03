@@ -222,7 +222,7 @@ class App(fix.Application):
         return orders_sent
 
 def main(cfg, trademode):
-    settings = fix.SessionSettings(cfg)   
+    settings = fix.SessionSettings(cfg)
     app = App()
     times = [] 
     
