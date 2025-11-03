@@ -20,12 +20,12 @@ trademode = sys.argv[2]
 if trademode == "simpleRepeat":
     PRICE  = 0.52
     QTY = 1
-    maxloop = 20
+    maxloop = 10
     incr = 0.00
 elif trademode == "layer":
     PRICE   = 0.52       # starting price
     QTY     = 1          # quantity per order
-    maxloop = 25       # number of up/down passes on the ladder
+    maxloop = 1000       # number of up/down passes on the ladder
     scope   = 0.10       # total range, e.g. 0.52–0.62
     step    = 0.01       # increment size per layer    
 
@@ -290,29 +290,19 @@ def main(cfg, trademode):
         elapsed_ns = end_ns - start_ns
         elapsed_ms = elapsed_ns / 1_000_000
         print(f"Elapsed (ms): {elapsed_ms:,.3f}")
-        
-        print("Hit CTRL+C to log out and exit the app")
+
+        # keep session alive to receive ExecReports
         while True:
-            time.sleep(0.2)
+            time.sleep(1)
 
-    # keep session alive to receive ExecReports
     except KeyboardInterrupt:
-    # graceful shutdown on Ctrl-C
-    logout_and_stop(wait_secs=5)
-
-    except Exception as e:
-        print(f"[ERROR] Unexpected: {e}", file=sys.stderr)
-        # ensure the engine stops even on errors
-        logout_and_stop(wait_secs=2)
-
+        pass
     finally:
-        # safety net: if not already stopped, stop now
-        if not stopped:
-            try:
-                init.stop()
-            except Exception:
-                pass
-            stopped = True
+        # ALWAYS stop initiator cleanly to avoid segfaults at interpreter shutdown
+        try:
+            init.stop()
+        except Exception as e:
+            print(f"[WARN] init.stop() raised: {e}", file=sys.stderr)
     
 if __name__ == "__main__":
     if len(sys.argv) < 2:

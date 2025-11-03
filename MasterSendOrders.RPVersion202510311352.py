@@ -2,36 +2,27 @@
 import time, uuid, threading, re, pytz, sys, statistics, datetime
 import quickfix as fix
 import quickfix50sp2 as fix50sp2
-
-from decimal import Decimal, ROUND_HALF_UP
-from dataclasses import dataclass
 from pathlib import Path
 from datetime import datetime
-
 rpdir = Path("/home/ec2-user/pythonQF")
-
-def _q(x, quantum="0.01"):
-        # Quantize Decimal x to the given quantum string (default 1 cent)
-        return Decimal(x).quantize(Decimal(quantum), rounding=ROUND_HALF_UP)
+#
+print ("possible modes simpleRepeat latency layerxxxx")
+print ("dont forget to have the config file as the first arg..")
 
 cfg = sys.argv[1]
 trademode = sys.argv[2]
 
+print ("trademode")
+
 if trademode == "simpleRepeat":
     PRICE  = 0.52
     QTY = 1
-    maxloop = 20
+    maxloop = 100000
     incr = 0.00
-elif trademode == "layer":
-    PRICE   = 0.52       # starting price
-    QTY     = 1          # quantity per order
-    maxloop = 25       # number of up/down passes on the ladder
-    scope   = 0.10       # total range, e.g. 0.52–0.62
-    step    = 0.01       # increment size per layer    
 
-print("The Price is: ", PRICE, "and trademode is: ", trademode)
-user_input = input("Pause check above then hit enter")   #pause before executing just in case
-
+print("The Price is: ", PRICE)
+print("The trademode is: ", trademode)
+user_input = input("Pause check above then hit enter")
 # Build child paths
 data_dir = rpdir / "data"
 log_file = rpdir / "logs" / "app.log"
@@ -76,7 +67,6 @@ class App(fix.Application):
     def toAdmin(self, msg, sid):
         mt = fix.MsgType(); msg.getHeader().getField(mt)
         if mt.getValue() == fix.MsgType_Logon:
-            
             # 1) never send SenderSubID(50) on Logon
             try:
                 msg.getHeader().removeField(50)
@@ -123,81 +113,7 @@ class App(fix.Application):
         # print(f"[SEND] GTC LIMIT {symbol} {('BUY' if buy else 'SELL')} {qty} @ {price} {SecSubType} -> {ok}")
         msgstrrp = (f"[SEND] GTC LIMIT {symbol} {('BUY' if buy else 'SELL')} {qty} @ {price} {SecSubType} -> {ok}")
         with rplog_file.open("a", encoding="utf-8") as f:
-            f.write(msgstrrp + "\n")    
-
-    def run_layer_with_maxloop(app, symbol, price, scope, step, qty, account, secsubtype,
-                            side_buy=True, price_quantum="0.01", max_orders=1000):
-
-        # Sends up to max_orders orders while bouncing the price between
-        # [price .. price+scope] inclusive, stepping by 'step' and reversing at the edges.
-        
-        low  = _q(str(price),  price_quantum)
-        high = _q(str(Decimal(str(price)) + Decimal(str(scope))), price_quantum)
-        inc  = _q(str(step),   price_quantum)
-
-        # current price and direction (+1 up, -1 down)
-        current    = low
-        direction  = Decimal(1)
-
-        orders_sent = 0
-
-        # Optional: 10 trade "types" (uncomment / customize if you want per-tick variety)
-        TRADE_TYPES = None
-        # Example:
-        # TRADE_TYPES = [
-        #     {"account":"yesRonaldo","secsub":"YES","qty":1},
-        #     {"account":"yesRonaldo","secsub":"NO", "qty":1},
-        #     {"account":"noRonaldo", "secsub":"YES","qty":2},
-        #     {"account":"noRonaldo", "secsub":"NO", "qty":2},
-        #     {"account":"RPTEST",    "secsub":"YES","qty":3},
-        #     {"account":"RPTEST",    "secsub":"NO", "qty":3},
-        #     {"account":"yesTippy",  "secsub":"YES","qty":1},
-        #     {"account":"yesTippy",  "secsub":"NO", "qty":1},
-        #     {"account":"noTippy",   "secsub":"YES","qty":2},
-        #     {"account":"noTippy",   "secsub":"NO", "qty":2},
-        # ]
-
-        while orders_sent < max_orders:
-            # send one (or many) order(s) at 'current'
-            if TRADE_TYPES:
-                for tt in TRADE_TYPES:
-                    if orders_sent >= max_orders:
-                        break
-                    app.send_limit(
-                        symbol=symbol,
-                        buy=side_buy,
-                        qty=tt["qty"],
-                        price=float(current),
-                        SecSubType=tt["secsub"],
-                        account=tt["account"]
-                    )
-                    orders_sent += 1
-            else:
-                # single-type send using provided account/secsubtype/qty
-                app.send_limit(
-                    symbol=symbol,
-                    buy=side_buy,
-                    qty=qty,
-                    price=float(current),
-                    SecSubType=secsubtype,
-                    account=account
-                )
-                orders_sent += 1
-
-            # edge checks + bounce
-            if current >= high:
-                direction = Decimal(-1)
-            elif current <= low:
-                direction = Decimal(1)
-
-            # step to next price, staying quantized & in-bounds
-            current = _q(str(current + direction * inc), price_quantum)
-            if current > high:
-                current = high
-            if current < low:
-                current = low
-
-        return orders_sent
+            f.write(msgstrrp + "\n")
 
 def main(cfg, trademode):
     settings = fix.SessionSettings(cfg)
@@ -214,7 +130,7 @@ def main(cfg, trademode):
     logon_timeout_secs = 10 
     start_time = time.time()
     
-    # Want to delete at some point but this is a good check for now...
+    # Use ONE main try...finally block for execution and cleanup and make sure it will run
     try:
         # 1. Wait for session object to be created
         while app.session_id is None and (time.time() - start_time) < 5:
@@ -233,86 +149,58 @@ def main(cfg, trademode):
             print("Action: Check your QuickFIX logs for the server's rejection reason (Tags 49, 56, 34, etc.).")
             # If logon fails, we stop here (do not proceed to order loop)
             return 
-        
+
         # --- TRADING LOOP STARTS HERE (Only if logon succeeded) ---
+        
+        i = 1
+        NEWPRICE = PRICE
+
+        # --- START ---
         start_ns = time.perf_counter_ns()
         start_dt = datetime.fromtimestamp(start_ns / 1_000_000_000)
+        # Extract milliseconds (3 digits)
         ms = start_dt.microsecond // 1000
         print(f"Start time : {start_dt.strftime('%H:%M:%S')}.{ms:03d}")
-        print("Before the loop here are the values:",
-              SYMBOL, SIDE_BUY, QTY, PRICE, SecSubType, ACCOUNT)
+
+        print("Before the loop here are the values:", SYMBOL, SIDE_BUY, QTY, NEWPRICE, SecSubType, ACCOUNT)
         
-        # --- main logical main loop start ---
-        if trademode == "layer":
-            # Use the variables you set at the top:
-            low   = _q(PRICE, "0.01")
-            high  = _q(Decimal(str(PRICE)) + Decimal(str(scope)), "0.01")
-            stepD = _q(step, "0.01")
-
-            orders_sent = 0
-            # Keep sending until we hit maxloop (total orders), bouncing between low..high..low
-            while orders_sent < maxloop:
-                # ---- UP LEG: low -> high (inclusive) ----
-                p = low
-                while p <= high and orders_sent < maxloop:
-                    app.send_limit(SYMBOL, SIDE_BUY, QTY, float(p), SecSubType, ACCOUNT)
-                    orders_sent += 1
-                    p = _q(p + stepD, "0.01")
-
-                # ---- DOWN LEG: (high - step) -> low (inclusive) ----
-                p = _q(high - stepD, "0.01")
-                while p >= low and orders_sent < maxloop:
-                    app.send_limit(SYMBOL, SIDE_BUY, QTY, float(p), SecSubType, ACCOUNT)
-                    orders_sent += 1
-                    p = _q(p - stepD, "0.01")
-
-            print(f"[layer] total orders sent: {orders_sent}")
-
-        elif trademode == "simplerepeat":
-            i = 1
-            NEWPRICE = PRICE
-            while i <= maxloop:
-                start = time.perf_counter()
-                NEWPRICE = NEWPRICE + incr
-                app.send_limit(SYMBOL, SIDE_BUY, QTY, NEWPRICE, SecSubType, ACCOUNT)
-                # elapsed = (time.perf_counter() - start) * 1000.0  # keep if you still want timings
-                # times.append(elapsed)
-                time.sleep(0.0001)  # optional throttle current nano
-                i += 1
-
-        # --- main logical main loop end ---
-
-        # --- END TIMING ---
+        # layer up the lower half of book, then the upper half or start at 99 and go down in increm
+        while i <= maxloop:
+            start = time.perf_counter()
+            NEWPRICE = NEWPRICE + incr
+            
+            # Simplified mode checking:
+            # We assume one of the modes is active based on the arguments
+            app.send_limit(SYMBOL, SIDE_BUY, QTY, NEWPRICE, SecSubType, ACCOUNT)
+            elapsed = (time.perf_counter() - start) * 1000.0 # ms
+            times.append(elapsed)
+            # optional throttle / logging — safe to remove for raw throughput
+            time.sleep(0.0000001)
+            i += 1
+        
+        # --- END ---
         end_ns = time.perf_counter_ns()
         end_dt = datetime.fromtimestamp(end_ns / 1_000_000_000)
         ms = end_dt.microsecond // 1000
         print(f"End time   : {end_dt.strftime('%H:%M:%S')}.{ms:03d}")
+        # --- ELAPSED ---
         elapsed_ns = end_ns - start_ns
         elapsed_ms = elapsed_ns / 1_000_000
         print(f"Elapsed (ms): {elapsed_ms:,.3f}")
-        
-        print("Hit CTRL+C to log out and exit the app")
+
+
+        # keep session alive to receive ExecReports
         while True:
-            time.sleep(0.2)
+            time.sleep(1)
 
-    # keep session alive to receive ExecReports
     except KeyboardInterrupt:
-    # graceful shutdown on Ctrl-C
-    logout_and_stop(wait_secs=5)
-
-    except Exception as e:
-        print(f"[ERROR] Unexpected: {e}", file=sys.stderr)
-        # ensure the engine stops even on errors
-        logout_and_stop(wait_secs=2)
-
+        pass
     finally:
-        # safety net: if not already stopped, stop now
-        if not stopped:
-            try:
-                init.stop()
-            except Exception:
-                pass
-            stopped = True
+        # ALWAYS stop initiator cleanly to avoid segfaults at interpreter shutdown
+        try:
+            init.stop()
+        except Exception as e:
+            print(f"[WARN] init.stop() raised: {e}", file=sys.stderr)
     
 if __name__ == "__main__":
     if len(sys.argv) < 2:
