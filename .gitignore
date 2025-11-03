@@ -1,17 +1,4 @@
-# Ignore all log files
-*.log
-*.log.*
-
-# Ignore logs folder
 logs/
-log/
-
-# Ignore AWS CLI v2 installer
 .aws/
+*.log
 *.zip
-
-# Optional: Ignore temp/build files
-__pycache__/
-*.pyc
-.env
-.DS_Store
