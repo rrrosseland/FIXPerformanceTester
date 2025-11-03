@@ -172,6 +172,12 @@ class App(fix.Application):
         #     {"account":"noTippy",   "secsub":"YES","qty":2},
         #     {"account":"noTippy",   "secsub":"NO", "qty":2},
         # ]
+        # TRADE_Products = [
+        #     {"# SYMBOL = "CBBTC_123125_65000""},
+        #     {"SYMBOL = "CBBTC_123125_142500""},
+        #     {"SYMBOL = "MNYCG_110425_Mamdani""},
+        #     {"SYMBOL = "CBBTC_123125_132500""}
+        # ]
 
         while orders_sent < max_orders:
             # send one (or many) order(s) at 'current'
