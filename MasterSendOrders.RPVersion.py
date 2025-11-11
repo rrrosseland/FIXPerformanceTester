@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import time, uuid, threading, re, pytz, sys, statistics, datetime, threading, queue, collections
+import collections, datetime, pytz, queue, re, threading, time, uuid,    sys, statistics,  threading,  collections
 
 import quickfix as fix
 import quickfix50sp2 as fix50sp2
@@ -26,10 +26,10 @@ SENDER_SUB_ID = "4C001"      # Session / identity / never changes
 SIDE_BUY = True              # our products are always BUY, keep True
 
 # .......Trading user control
-# ACCOUNT = "yesRonaldo"
+ACCOUNT = "yesRonaldo"
 # ACCOUNT = "noRonaldo"
 # ACCOUNT = "noTippy"
-ACCOUNT = "yesTippy"
+# ACCOUNT = "yesTippy"
 # ACCOUNT = "RPTEST"
 
 # .......Trading event control
@@ -43,11 +43,11 @@ SecSubType   = "YES"
 # SecSubType = "NO"
 
 # .......Mode-independent numeric defaults (CLI can override per-mode later)
-PRICE        = 0.50
+PRICE        = 0.51
 QTY          = 1
 
 # .......Mode: simplerepeat, layer, replace and ratchet
-maxloop      = 20               # how many times my outer loop runs per mode - count - attempts
+maxloop      = 1000              # how many times my outer loop runs per mode - count - attempts
 
 # .......Mode: layer and replace
 scope        = 0.10             # total ladder range
@@ -56,6 +56,14 @@ step         = 0.01             # ladder increment
 # .......Mode: ratchet 
 ratchet_repeats = 20            # number of replaces
 ratchet_pause_s = 0.020         # seconds between replaces
+
+# --- Global FIX parameters ---
+# Time In Force constants (tag 59)
+tif  = fix.TimeInForce_DAY                  # Day
+# tif = fix.TimeInForce_GOOD_TILL_CANCEL    # GTC
+# tif = fix.TimeInForce_IMMEDIATE_OR_CANCEL # IOC
+# tif = fix.TimeInForce_FILL_OR_KILL        # FOK
+# tif = fix.TimeInForce_GOOD_TILL_DATE      # GTD (requires ExpireDate(432))
 # -------------------------------------------------------------------
 
 # .......the trackedorder variables keep track of all the orders going out so we can replace the value
@@ -110,6 +118,26 @@ class OrderTracker:
             o = self._by_last_clordid.get(clordid)
             if o:
                 o.pending_replace = True
+    def mark_pending_cancel(self, cl):
+        o = self.get_by_last_clordid(cl)
+        if o: o.pending = "cancel"
+
+    def update_on_reject(self, cl, code=None):
+        # For 35=9: mark not-live when too-late/unknown (tune codes per venue)
+        o = self.get_by_last_clordid(cl)
+        if o:
+            if code in (1, 6):  # 1=Unknown, 6=Too late (common)
+                o.live = False
+            o.pending = None
+    
+    def live_clordids(self):
+        # Return the latest ClOrdID for each order chain that is still live (working).
+        with self._lock:
+            return [
+                o.last_clordid
+                for o in self._by_last_clordid.values()
+                if getattr(o, "live", False)
+            ]
 
 class App(fix.Application):
     def __init__(self):
@@ -128,6 +156,7 @@ class App(fix.Application):
         # CRITICAL confirmation: Set logged_on to True when the Logon message is acknowledged by the server
         self.logged_on = True
         print(f"[onLogon] Logged on: {sid}")
+        print(f"[DEBUG] tracker size={len(self.tracker._by_last_clordid)} live={len(self.tracker.live_clordids())}")
         
     def onLogout(self, sid):
         self.logged_on = False
@@ -237,54 +266,43 @@ class App(fix.Application):
     def send_limit(self, symbol, buy, qty, price, sec_subtype, account=None, tif=None):
         nos = fix50sp2.NewOrderSingle()
         cl = f"CL-{uuid.uuid4()}"
-        nos.setField(fix.ClOrdID(cl))                         # 11
-        if account:    nos.setField(fix.Account(account))     # 1
-        nos.setField(fix.Symbol(symbol))                      # 55
-        nos.setField(fix.Side(fix.Side_BUY if buy else fix.Side_SELL))  # 54
-        nos.setField(fix.TransactTime())                      # 60
-        nos.setField(fix.OrdType(fix.OrdType_LIMIT))          # 40=2
-        nos.setField(fix.OrderQty(float(qty)))                # 38
-        nos.setField(fix.Price(float(price)))                 # 44
-        nos.setField(fix.CustOrderCapacity(1))                # 582
-        nos.setField(fix.AccountType(1))                      # 581
+        tif_val = tif if tif is not None else fix.TimeInForce_DAY
+
+        # FIX fields (always BUY)
+        nos.setField(fix.ClOrdID(cl))                           # 11
+        if account:     nos.setField(fix.Account(account))      # 1
+        nos.setField(fix.Symbol(symbol))                        # 55
+        nos.setField(fix.Side(fix.Side_BUY))                    # 54 (constant BUY)
+        nos.setField(fix.TransactTime())                        # 60
+        nos.setField(fix.OrdType(fix.OrdType_LIMIT))            # 40=2
+        nos.setField(fix.OrderQty(float(qty)))                  # 38
+        nos.setField(fix.Price(float(price)))                   # 44
+        nos.setField(fix.CustOrderCapacity(1))                  # 582
+        nos.setField(fix.AccountType(1))                        # 581
         if sec_subtype: nos.setField(fix.SecuritySubType(sec_subtype))  # 762
-        if tif is not None: nos.setField(fix.TimeInForce(tif))          # 59
-        else:               nos.setField(fix.TimeInForce(fix.TimeInForce_DAY))
+        nos.setField(fix.TimeInForce(tif_val))                  # 59
+
+        # Track locally before sending (avoid race with fast ExecReports)
+        self.tracker.register_new(TrackedOrder(
+            symbol=symbol,
+            side=fix.Side_BUY,             # fixed constant
+            qty=float(qty),
+            tif=tif_val,
+            account=account,
+            sec_subtype=sec_subtype,
+            first_clordid=cl,
+            last_clordid=cl,
+            price=float(price),
+            live=False
+        ))
 
         ok = fix.Session.sendToTarget(nos, self.session_id)
 
         with rplog_file.open("a", encoding="utf-8") as f:
-            f.write(f"[SEND] LIMIT {symbol} {('BUY' if buy else 'SELL')} {qty} @ {price} {sec_subtype} -> {ok}\n")
+            f.write(f"[SEND] LIMIT {symbol} BUY {qty} @ {price} {sec_subtype} -> {ok}\n")
 
-        # Track
-        self.tracker.register_new(TrackedOrder(
-            symbol=symbol,
-            side=(fix.Side_BUY if buy else fix.Side_SELL),
-            qty=float(qty),
-            tif=tif,
-            account=account,
-            sec_subtype=sec_subtype,
-            first_clordid=cl,
-            last_clordid=cl,
-            price=float(price),
-            live=False
-        ))
         return cl
-
-        # Track it
-        self.tracker.register_new(TrackedOrder(
-            symbol=symbol,
-            side=(fix.Side_BUY if buy else fix.Side_SELL),
-            qty=float(qty),
-            tif=tif,
-            account=account,
-            sec_subtype=sec_subtype,
-            first_clordid=cl,
-            last_clordid=cl,
-            price=float(price),
-            live=False
-        ))
-        return cl        
+    
 
     def run_layer_with_maxloop(app, symbol, price, scope, step, qty, account, secsubtype,
                             side_buy=True, price_quantum="0.01", max_orders=1000):
@@ -350,39 +368,102 @@ class App(fix.Application):
 
         return orders_sent
 
-    def send_replace(self, last_clordid, new_price=None, new_qty=None):
+    def send_replace(self, last_clordid, *, new_price=None, new_qty=None, ord_type=fix.OrdType_LIMIT,restate_fields=True):
+        # 0) lookup + live guard
         o = self.tracker.get_by_last_clordid(last_clordid)
-        if not o or not o.live:
+        if not o or not getattr(o, "live", True):
             print(f"[WARN] Cannot replace; order not live or unknown: {last_clordid}")
             return None
 
-        new_cl = f"CR-{uuid.uuid4()}"
-        rep = fix50sp2.OrderCancelReplaceRequest()
-        rep.setField(fix.OrigClOrdID(o.last_clordid))  # 41
-        rep.setField(fix.ClOrdID(new_cl))              # 11
-        rep.setField(fix.Symbol(o.symbol))             # 55
-        rep.setField(fix.Side(o.side))                 # 54
-        rep.setField(fix.TransactTime())               # 60
+        # 1) common builder
+        msg, new_cl = self.build_linked_fix(o, fix50sp2.OrderCancelReplaceRequest, "RE")
 
-        # Include OrderID if we have it—reduces DK risk
-        if o.order_id:
-            rep.setField(fix.OrderID(o.order_id))      # 37
+        # 2) message-specific fields
+        msg.setField(fix.OrdType(ord_type))  # 40 required on 35=G
+        if new_qty is not None:
+            msg.setField(fix.OrderQty(float(new_qty)))  # 38
+        if ord_type == fix.OrdType_LIMIT:
+            if new_price is not None:
+                msg.setField(fix.Price(float(new_price)))  # 44
+            elif getattr(o, "price", None) is not None:
+                msg.setField(fix.Price(float(o.price)))    # restate unchanged
 
-        # Price/Qty changes (many venues want qty restated even if unchanged)
-        rep.setField(fix.OrderQty(float(new_qty if new_qty is not None else o.qty)))  # 38
-        if new_price is not None:
-            rep.setField(fix.Price(float(new_price)))  # 44
-        elif o.price is not None:
-            rep.setField(fix.Price(float(o.price)))
+        # 3) optional restatements (venue-dependent)
+        if restate_fields:
+            if getattr(o, "tif", None) is not None:
+                msg.setField(fix.TimeInForce(o.tif))               # 59
+            if getattr(o, "account", None):
+                msg.setField(fix.Account(o.account))               # 1
+            if getattr(o, "sec_subtype", None):
+                msg.setField(fix.SecuritySubType(o.sec_subtype))   # 762
 
-        # Restate these if your venue requires (often yes)
-        if o.tif is not None:       rep.setField(fix.TimeInForce(o.tif))        # 59
-        if o.account:               rep.setField(fix.Account(o.account))        # 1
-        if o.sec_subtype:           rep.setField(fix.SecuritySubType(o.sec_subtype))  # 762
+        # 4) tracker transition
+        try:
+            self.tracker.mark_pending_replace(o.last_clordid)
+        except Exception:
+            pass
 
-        fix.Session.sendToTarget(rep, self.session_id)
-        self.tracker.mark_pending_replace(o.last_clordid)
+        # 5) send + return new ClOrdID
+        fix.Session.sendToTarget(msg, self.session_id)
         return new_cl
+
+    def send_cancel(self, last_clordid, *, restate_fields=True):
+        # 0) lookup + live guard
+        o = self.tracker.get_by_last_clordid(last_clordid)
+        if not o or not getattr(o, "live", True):
+            print(f"[WARN] Cannot cancel; order not live or unknown: {last_clordid}")
+            return None
+
+        # 1) common builder
+        msg, new_cl = self.build_linked_fix(o, fix50sp2.OrderCancelRequest, "CA")
+
+        # 2) (no cancel-specific fields beyond the builder’s linkage + qty)
+
+        # 3) optional restatements (use same flags for symmetry)
+        if restate_fields:
+            if getattr(o, "tif", None) is not None:
+                msg.setField(fix.TimeInForce(o.tif))               # 59
+            if getattr(o, "account", None):
+                msg.setField(fix.Account(o.account))               # 1
+            if getattr(o, "sec_subtype", None):
+                msg.setField(fix.SecuritySubType(o.sec_subtype))   # 762
+
+        # 4) tracker transition
+        try:
+            self.tracker.mark_pending_cancel(o.last_clordid)
+        except Exception:
+            pass
+
+        # 5) send + return new ClOrdID
+        fix.Session.sendToTarget(msg, self.session_id)
+        return new_cl    
+
+    def build_linked_fix(self, o, msg_cls, new_prefix):
+        # Build a FIX amendment message skeleton linked to an existing tracked order.
+        # Build a Cancel or Cancel/Replace from the same template.
+        # Common fields: 41 OrigClOrdID 11 new ClOrdID 55 Symbol
+        # 54 Side 60 TransactTime optionally 37 OrderID and 38 Qty
+        # Returns (msg, new_clordid)
+        
+        msg = msg_cls()
+        new_cl = f"{new_prefix}-{uuid.uuid4()}"
+
+        # Required cross-ref to original
+        msg.setField(fix.OrigClOrdID(o.last_clordid))  # 41
+        msg.setField(fix.ClOrdID(new_cl))              # 11
+
+        # Common identity fields
+        msg.setField(fix.Symbol(o.symbol))             # 55
+        msg.setField(fix.Side(o.side))                 # 54
+        msg.setField(fix.TransactTime())               # 60
+
+        # Helpful/venue-specific but safe to include
+        if getattr(o, "order_id", None):
+            msg.setField(fix.OrderID(o.order_id))      # 37
+        if getattr(o, "qty", None):
+            msg.setField(fix.OrderQty(float(o.qty)))   # 38
+
+        return msg, new_cl
 
 def main(cfg, trademode):
     settings = fix.SessionSettings(cfg)   
@@ -492,7 +573,54 @@ def main(cfg, trademode):
                     replaced += 1
 
             print(f"[replace] sent={len(created)} replaces={replaced} skipped={skipped}")
-        
+
+        elif trademode == "cancel":  # same shape as your replace demo
+            if not app.logged_on:
+                print("[ERROR] Not logged on; cannot cancel.")
+                return
+
+            # 1) Send N BUY limits (registers in tracker before send)
+            created = []
+            for i in range(maxloop):
+                cl = app.send_limit(
+                    SYMBOL,
+                    True,               # always BUY
+                    QTY,
+                    PRICE,  
+                    SecSubType,
+                    ACCOUNT,
+                    tif
+                )
+                created.append(cl)
+
+            # 2) Wait for NEW acks so tracker flips live=True
+            acks = 0
+            for cl in created:
+                try:
+                    app.wait_for_exec(cl, want_exec_types=("0",), timeout=2.0)  # ExecType=NEW
+                    acks += 1
+                except Exception:
+                    pass
+            print(f"[INFO] NEW acks received: {acks}/{len(created)}")
+
+            # 3) Cancel exactly those orders (same shape as replace demo)
+            sent = []
+            for cl in created:
+                new_cl = app.send_cancel(cl)
+                if new_cl:
+                    sent.append(new_cl)
+            print(f"[INFO] Sent {len(sent)} cancels (35=F)")
+
+            # 4) (optional) Wait for CANCELED acks
+            done = 0
+            for cxl_cl in sent:
+                try:
+                    app.wait_for_exec(cxl_cl, want_exec_types=("4",), timeout=3.0)  # ExecType=CANCELED
+                    done += 1
+                except Exception:
+                    pass
+            print(f"[RESULT] Canceled {done}/{len(sent)} within timeout")
+
         elif trademode == "ratchet":
             print("[MODE] ratchet: 1 new order, then replace it repeatedly")
 
@@ -580,7 +708,7 @@ if __name__ == "__main__":
     cfg = sys.argv[1]
     trademode = sys.argv[2].lower().strip()   
 
-    if trademode not in {"simplerepeat", "layer", "replace", "ratchet"}:
+    if trademode not in {"simplerepeat", "layer", "replace", "ratchet", "cancel"}:
         print(f"Unknown mode: {trademode}")
         sys.exit(2)
 
