@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
-import time, uuid, threading, re, pytz, sys, statistics, datetime
+import time, uuid, threading, re, pytz, sys, statistics, datetime, threading, queue, collections
+
 import quickfix as fix
 import quickfix50sp2 as fix50sp2
 
 from decimal import Decimal, ROUND_HALF_UP
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from datetime import datetime
+from typing import Dict, Optional
 
 rpdir = Path("/home/ec2-user/pythonQF")
 
@@ -14,20 +16,24 @@ def _q(x, quantum="0.01"):
         # Quantize Decimal x to the given quantum string (default 1 cent)
         return Decimal(x).quantize(Decimal(quantum), rounding=ROUND_HALF_UP)
 
-cfg = sys.argv[1]
-trademode = sys.argv[2].lower()
+# cfg = sys.argv[1]
+# trademode = sys.argv[2].lower()
 
 if trademode == "simplerepeat":
-    PRICE  = 0.51
+    PRICE  = 0.52
     QTY = 1
-    maxloop = 1
-
+    maxloop = 5
 elif trademode == "layer":
     PRICE   = 0.52       # starting price
     QTY     = 1          # quantity per order
-    maxloop = 100         # number of up/down passes on the ladder
+    maxloop = 5      # number of up/down passes on the ladder
     scope   = 0.10       # total range, e.g. 0.52–0.62
-    step    = 0.01       # increment size per layer    
+    step    = 0.01       # increment size per layer
+elif trademode == "replace":
+    PRICE   = 0.52
+    QTY     = 1
+    maxloop = 5
+    bump    = 0.01       # how much to change the price on each replace
 
 print("The Price is: ", PRICE, "and trademode is: ", trademode)
 user_input = input("Pause check above then hit enter")   #pause before executing just in case
@@ -52,11 +58,65 @@ SecSubType = "YES"
 # SecSubType = "NO"
 SIDE_BUY = True  # this is always true with our products
 
+@dataclass
+class TrackedOrder:
+    symbol: str
+    side: int            # fix.Side_BUY / fix.Side_SELL
+    qty: float
+    tif: Optional[int] = None
+    account: Optional[str] = None
+    sec_subtype: Optional[str] = None
+    first_clordid: str = ""
+    last_clordid: str = ""
+    order_id: Optional[str] = None
+    price: Optional[float] = None
+    live: bool = False
+    pending_replace: bool = False
+
+class OrderTracker:
+    def __init__(self):
+        self._by_last_clordid: Dict[str, TrackedOrder] = {}
+        self._lock = threading.Lock()
+
+    def register_new(self, ord: TrackedOrder):
+        with self._lock:
+            self._by_last_clordid[ord.last_clordid] = ord
+
+    def on_ack_new(self, last_clordid: str, order_id: Optional[str]):
+        with self._lock:
+            o = self._by_last_clordid.get(last_clordid)
+            if o:
+                o.order_id = order_id
+                o.live = True
+
+    def on_ack_replace(self, orig_clordid: str, new_clordid: str, new_price: Optional[float]):
+        with self._lock:
+            o = self._by_last_clordid.pop(orig_clordid, None)
+            if o:
+                o.last_clordid = new_clordid
+                if new_price is not None:
+                    o.price = new_price
+                o.pending_replace = False
+                o.live = True
+                self._by_last_clordid[new_clordid] = o
+
+    def get_by_last_clordid(self, clordid: str) -> Optional[TrackedOrder]:
+        with self._lock:
+            return self._by_last_clordid.get(clordid)
+
+    def mark_pending_replace(self, clordid: str):
+        with self._lock:
+            o = self._by_last_clordid.get(clordid)
+            if o:
+                o.pending_replace = True
+
 class App(fix.Application):
     def __init__(self):
         super().__init__()
         self.session_id = None 
         self.logged_on = False
+        self.tracker = OrderTracker()   # <-- for replace
+        self._ev = collections.defaultdict(queue.Queue)  # keyed by ClOrdID
         
     def onCreate(self, sid):
         # CRITICAL: Set the session ID here upon creation
@@ -74,7 +134,7 @@ class App(fix.Application):
         # keep the last session_id so we can re-use on reconnect if needed to hold the logout...
     
     # this function makes the CTRL+C close cleanly because we never call onLogout due to it's requirement with QuickFIX
-    def logout_and_stop(app, init, wait_secs=5):        
+    def logout_and_stop(self, init, wait_secs=5):        
         try:
             if app.session_id:
                 sess = fix.Session.lookupSession(app.session_id)
@@ -112,9 +172,65 @@ class App(fix.Application):
         # Add SenderSubID(50) to *all* application messages
         msg.getHeader().setField(fix.SenderSubID(SENDER_SUB_ID))
 
+    #need to add code in fromApp so your app can learn when an order is live and what the broker’s OrderID(37) is.
+    #That info only arrives in application messages—specifically ExecutionReport (35=8)—which QuickFIX delivers to fromApp.
     def fromApp(self, msg, sid):
         with rplog_file.open("a", encoding="utf-8") as f:
-            f.write(msg.toString() + "\n")   
+            f.write(msg.toString() + "\n")
+         # 2) minimally track order state for replace support
+        mt = fix.MsgType(); msg.getHeader().getField(mt)
+        if mt.getValue() != fix.MsgType_ExecutionReport:   # only care about 35=8
+            return
+
+        # read the few fields we need (guard each in case absent)
+        exec_type = fix.ExecType();     msg.getField(exec_type)          # 150
+        clordid   = fix.ClOrdID();      msg.getField(clordid)            # 11
+        cl        = clordid.getValue()
+        cl11 = fix.ClOrdID();    msg.getField(cl11); cl = cl11.getValue()
+        et   = fix.ExecType();   msg.getField(et);   exec_type = et.getValue()
+        st   = None
+        order_id = None
+
+        try:
+            oid = fix.OrderID(); msg.getField(oid)                       # 37
+            order_id = oid.getValue()
+        except fix.FieldNotFound:
+            pass
+
+        if exec_type.getValue() == fix.ExecType_NEW:                     # 150=0
+            self.tracker.on_ack_new(cl, order_id)
+
+        elif exec_type.getValue() == fix.ExecType_REPLACE:               # 150=5
+            try:
+                orig = fix.OrigClOrdID(); msg.getField(orig)             # 41
+                new_px = None
+                try:
+                    px = fix.Price(); msg.getField(px)                   # 44
+                    new_px = float(px.getValue())
+                except fix.FieldNotFound:
+                    pass
+                self.tracker.on_ack_replace(orig.getValue(), cl, new_px)
+            except fix.FieldNotFound:
+                # Replace ack without 41 is unusual; just ignore gracefully
+                pass
+        # signal anyone waiting on this ClOrdID
+        self._ev[cl].put({
+            "exec_type": exec_type,   # e.g., fix.ExecType_REPLACE (='5')
+            "ord_status": st,         # '0','1','3','4',...
+            "clordid": cl
+        })
+    
+    def wait_for_exec(self, cl, want_exec_types=("0","5"), timeout=0.5):
+        end = time.time() + timeout
+        q = self._ev[cl]
+        while time.time() < end:
+            try:
+                ev = q.get(timeout=max(0, end - time.time()))
+            except queue.Empty:
+                return None
+            if ev["exec_type"] in want_exec_types:
+                return ev
+        return None
 
     def send_limit(self, symbol, buy, qty, price, SecSubType, account=None):
         nos = fix50sp2.NewOrderSingle()
@@ -139,7 +255,25 @@ class App(fix.Application):
         # print(f"[SEND] GTC LIMIT {symbol} {('BUY' if buy else 'SELL')} {qty} @ {price} {SecSubType} -> {ok}")
         msgstrrp = (f"[SEND] GTC LIMIT {symbol} {('BUY' if buy else 'SELL')} {qty} @ {price} {SecSubType} -> {ok}")
         with rplog_file.open("a", encoding="utf-8") as f:
-            f.write(msgstrrp + "\n")    
+            f.write(msgstrrp + "\n")
+         # your header fields, SenderSubID(50), etc. are set in toApp() or elsewhere
+
+        fix.Session.sendToTarget(nos, self.session_id)
+
+        # Track it
+        self.tracker.register_new(TrackedOrder(
+            symbol=symbol,
+            side=(fix.Side_BUY if buy else fix.Side_SELL),
+            qty=float(qty),
+            tif=tif,
+            account=account,
+            sec_subtype=sec_subtype,
+            first_clordid=cl,
+            last_clordid=cl,
+            price=float(price),
+            live=False
+        ))
+        return cl        
 
     def run_layer_with_maxloop(app, symbol, price, scope, step, qty, account, secsubtype,
                             side_buy=True, price_quantum="0.01", max_orders=1000):
@@ -154,31 +288,15 @@ class App(fix.Application):
         # current price and direction (+1 up, -1 down)
         current    = low
         direction  = Decimal(1)
-
         orders_sent = 0
-
         # Optional: 10 trade "types" (uncomment / customize if you want per-tick variety)
         TRADE_TYPES = None
         # Example:
         # TRADE_TYPES = [
         #     {"account":"yesRonaldo","secsub":"YES","qty":1},
         #     {"account":"yesRonaldo","secsub":"NO", "qty":1},
-        #     {"account":"noRonaldo", "secsub":"YES","qty":2},
-        #     {"account":"noRonaldo", "secsub":"NO", "qty":2},
-        #     {"account":"RPTEST",    "secsub":"YES","qty":3},
-        #     {"account":"RPTEST",    "secsub":"NO", "qty":3},
-        #     {"account":"yesTippy",  "secsub":"YES","qty":1},
-        #     {"account":"yesTippy",  "secsub":"NO", "qty":1},
-        #     {"account":"noTippy",   "secsub":"YES","qty":2},
-        #     {"account":"noTippy",   "secsub":"NO", "qty":2},
         # ]
-        # TRADE_Products = [
-        #     {"# SYMBOL = "CBBTC_123125_65000""},
-        #     {"SYMBOL = "CBBTC_123125_142500""},
-        #     {"SYMBOL = "MNYCG_110425_Mamdani""},
-        #     {"SYMBOL = "CBBTC_123125_132500""}
-        # ]
-
+        
         while orders_sent < max_orders:
             # send one (or many) order(s) at 'current'
             if TRADE_TYPES:
@@ -221,8 +339,42 @@ class App(fix.Application):
 
         return orders_sent
 
+    def send_replace(self, last_clordid, new_price=None, new_qty=None):
+        o = self.tracker.get_by_last_clordid(last_clordid)
+        if not o or not o.live:
+            print(f"[WARN] Cannot replace; order not live or unknown: {last_clordid}")
+            return None
+
+        new_cl = f"CR-{uuid.uuid4()}"
+        rep = fix50sp2.OrderCancelReplaceRequest()
+        rep.setField(fix.OrigClOrdID(o.last_clordid))  # 41
+        rep.setField(fix.ClOrdID(new_cl))              # 11
+        rep.setField(fix.Symbol(o.symbol))             # 55
+        rep.setField(fix.Side(o.side))                 # 54
+        rep.setField(fix.TransactTime())               # 60
+
+        # Include OrderID if we have it—reduces DK risk
+        if o.order_id:
+            rep.setField(fix.OrderID(o.order_id))      # 37
+
+        # Price/Qty changes (many venues want qty restated even if unchanged)
+        rep.setField(fix.OrderQty(float(new_qty if new_qty is not None else o.qty)))  # 38
+        if new_price is not None:
+            rep.setField(fix.Price(float(new_price)))  # 44
+        elif o.price is not None:
+            rep.setField(fix.Price(float(o.price)))
+
+        # Restate these if your venue requires (often yes)
+        if o.tif is not None:       rep.setField(fix.TimeInForce(o.tif))        # 59
+        if o.account:               rep.setField(fix.Account(o.account))        # 1
+        if o.sec_subtype:           rep.setField(fix.SecuritySubType(o.sec_subtype))  # 762
+
+        fix.Session.sendToTarget(rep, self.session_id)
+        self.tracker.mark_pending_replace(o.last_clordid)
+        return new_cl
+
 def main(cfg, trademode):
-    settings = fix.SessionSettings(cfg)
+    settings = fix.SessionSettings(cfg)   
     app = App()
     times = [] 
     
@@ -337,19 +489,28 @@ def main(cfg, trademode):
             stopped = True
     
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print("Usage: python3 MasterSendOrders.RPVersion.py <initiator.cfg> [mode]")
+    if len(sys.argv) < 3:
+        print("Usage: python3 MasterSendOrders.RPVersion.py <initiator.cfg> <simplerepeat|layer|replace>")
         sys.exit(1)
 
     cfg = sys.argv[1]
-    trademode = sys.argv[2].lower() if len(sys.argv) >= 3 else ""
-    # normalize common aliases
-    if trademode == "simplerepeat":
-        trademode = "simplerepeat"
-    elif trademode == "latency":
-        trademode = "latency"
-    elif trademode == "layer":
-        trademode = "layer"
+    trademode = sys.argv[2].lower().strip()
 
-# SINGLE entrypoint call; do not call main() again below
+    # Mode defaults
+    PRICE = 0.52
+    QTY = 1
+    maxloop = 10
+    bump = 0.01
+    scope = 0.10
+    step = 0.01
+
+    if trademode not in {"simplerepeat", "layer", "replace"}:
+        print(f"Unknown mode: {trademode}")
+        sys.exit(2)
+
+    print("The Price is:", PRICE, "and trademode is:", trademode)
+    input("Pause check above then hit enter")
+
+# stash in globals the few items main uses
+globals().update(dict(PRICE=PRICE, QTY=QTY, maxloop=maxloop, bump=bump, scope=scope, step=step))
 main(cfg, trademode)

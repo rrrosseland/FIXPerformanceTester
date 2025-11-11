@@ -20,7 +20,7 @@ trademode = sys.argv[2]
 if trademode == "simpleRepeat":
     PRICE  = 0.52
     QTY = 1
-    maxloop = 10
+    maxloop = 10000
     incr = 0.00
 elif trademode == "layer":
     PRICE   = 0.52       # starting price

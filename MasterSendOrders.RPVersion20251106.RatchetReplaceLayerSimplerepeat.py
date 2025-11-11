@@ -25,40 +25,36 @@ rplog_file = rpdir / "logs" / "rpapp.log"
 SENDER_SUB_ID = "4C001"      # Session / identity / never changes 
 SIDE_BUY = True              # our products are always BUY, keep True
 
-# .......Trading user control
-# ACCOUNT = "yesRonaldo"
+# Trading controls
+ACCOUNT = "yesRonaldo"
 # ACCOUNT = "noRonaldo"
 # ACCOUNT = "noTippy"
-ACCOUNT = "yesTippy"
+# ACCOUNT = "yesTippy"
 # ACCOUNT = "RPTEST"
-
-# .......Trading event control
 SYMBOL = "CBBTC_123125_132500"
 # SYMBOL = "CBBTC_123125_65000"
 # SYMBOL = "CBBTC_123125_142500"
 # SYMBOL = "MNYCG_110425_Mamdani"
-
-# .......Trading instrument control
 SecSubType   = "YES"
 # SecSubType = "NO"
 
-# .......Mode-independent numeric defaults (CLI can override per-mode later)
-PRICE        = 0.50
+# Mode-independent numeric defaults (CLI can override per-mode later)
+PRICE        = 0.52
 QTY          = 1
 
-# .......Mode: simplerepeat, layer, replace and ratchet
-maxloop      = 20               # how many times my outer loop runs per mode - count - attempts
-
-# .......Mode: layer and replace
+# Mode: layer
 scope        = 0.10             # total ladder range
 step         = 0.01             # ladder increment
 
-# .......Mode: ratchet 
-ratchet_repeats = 20            # number of replaces
-ratchet_pause_s = 0.020         # seconds between replaces
+# Mode: simplerepeat, layer, replace and ratchet
+maxloop      = 10               # how many times my outer loop runs per mode - count - attempts
+
+# Mode: layer, replace and ratchet
+bump         = 0.01             # price change per replace
+ratchet_repeats = 10            # number of replaces
+ratchet_pause_s = 0.20          # seconds between replaces
 # -------------------------------------------------------------------
 
-# .......the trackedorder variables keep track of all the orders going out so we can replace the value
 @dataclass
 class TrackedOrder:
     symbol: str
@@ -479,14 +475,14 @@ def main(cfg, trademode):
             for cl in created:
                 app.wait_for_exec(cl, want_exec_types=("0",), timeout=0.5)
 
-            # 3) selective replace (+step) only if order is live and not done
+            # 3) selective replace (+bump) only if order is live and not done
             replaced, skipped = 0, 0
             for cl in created:
                 o = app.tracker.get_by_last_clordid(cl)
                 if not o or not o.live:
                     skipped += 1
                     continue
-                new_px = (o.price if o.price is not None else PRICE) + step
+                new_px = (o.price if o.price is not None else PRICE) + bump
                 new_cl = app.send_replace(cl, new_price=new_px)
                 if new_cl:
                     replaced += 1
@@ -507,7 +503,7 @@ def main(cfg, trademode):
             replaces_ok = 0
             for k in range(ratchet_repeats):
                 # compute next price; you can choose linear or oscillating
-                next_px = base_px + (k + 1) * step
+                next_px = base_px + (k + 1) * bump
 
                 # (optional) verify the order is live before each replace
                 o = app.tracker.get_by_last_clordid(current_cl)
@@ -541,15 +537,9 @@ def main(cfg, trademode):
         end_dt = datetime.fromtimestamp(end_ns / 1_000_000_000)
         ms = end_dt.microsecond // 1000
         print(f"End time   : {end_dt.strftime('%H:%M:%S')}.{ms:03d}")
-
         elapsed_ns = end_ns - start_ns
         elapsed_ms = elapsed_ns / 1_000_000
         print(f"Elapsed (ms): {elapsed_ms:,.3f}")
-        # simple math off the time stamp diference no lengthy calculations by the code to determine
-        orders_per_sec = maxloop / (elapsed_ms / 1000.0)
-        ops = (maxloop * 1000.0) / elapsed_ms
-        print(f"Simple math for Orders/sec : {ops:,.2f}")
-
         
         print("Hit CTRL+C to log out and exit the app")
         while True:
@@ -599,7 +589,8 @@ if __name__ == "__main__":
             QTY=QTY,
             scope=scope,
             step=step,
-            maxloop=maxloop,            
+            maxloop=maxloop,
+            bump=bump,
             ratchet_repeats=ratchet_repeats,
             ratchet_pause_s=ratchet_pause_s,
         ))
