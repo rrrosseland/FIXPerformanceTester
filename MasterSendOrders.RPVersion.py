@@ -47,15 +47,15 @@ PRICE        = 0.51
 QTY          = 1
 
 # .......Mode: simplerepeat, layer, replace and ratchet
-maxloop      = 1000              # how many times my outer loop runs per mode - count - attempts
+maxloop      = 10           # how many times my outer loop runs per mode - count - attempts
 
 # .......Mode: layer and replace
 scope        = 0.10             # total ladder range
 step         = 0.01             # ladder increment
 
-# .......Mode: ratchet 
-ratchet_repeats = 20            # number of replaces
-ratchet_pause_s = 0.020         # seconds between replaces
+# .......Mode: ratchet - change the step to zero if you do not want to just send cancel/replace
+ratchet_repeats = 20             # number of replaces
+ratchet_pause_s = 0.0002         # seconds between replaces
 
 # --- Global FIX parameters ---
 # Time In Force constants (tag 59)
@@ -622,6 +622,7 @@ def main(cfg, trademode):
             print(f"[RESULT] Canceled {done}/{len(sent)} within timeout")
 
         elif trademode == "ratchet":
+            # Send one live order, then keep nudging its price and wait for each confirmation (ExecutionReport 150=5) before nudging again
             print("[MODE] ratchet: 1 new order, then replace it repeatedly")
 
             # 1) Send one NEW order
