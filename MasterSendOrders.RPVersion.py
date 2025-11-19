@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import collections, datetime, pytz, queue, re, threading, time, uuid,    sys, statistics,  threading,  collections
+import collections, datetime, pytz, queue, re, threading, time, uuid, sys, statistics, threading, collections
 
 import quickfix as fix
 import quickfix50sp2 as fix50sp2
@@ -16,55 +16,122 @@ def _q(x, quantum="0.01"):
         # Quantize Decimal x to the given quantum string (default 1 cent)
         return Decimal(x).quantize(Decimal(quantum), rounding=ROUND_HALF_UP)
 
+def price_for_symbol(symbol: str, base_px: Optional[float] = None) -> float:
+    # Derive a price from the symbol suffix, or just use base_px if given.
+    # Example: CBBTC_123125_65000 -> 65000.0
+    if base_px is not None:
+        return base_px
+    try:
+        strike = symbol.rsplit("_", 1)[1]
+        return float(strike)
+    except Exception:
+        return 1.0
+
 # Build child paths
 data_dir = rpdir / "data"
 log_file = rpdir / "logs" / "app.log"
 rplog_file = rpdir / "logs" / "rpapp.log"
 
 # -------------------- USER DEFAULTS (edit here) --------------------
-SENDER_SUB_ID = "4C001"      # Session / identity / never changes 
-SIDE_BUY = True              # our products are always BUY, keep True
+# SenderSubID (FIX tag 50): identifies THIS trading application to the venue.
+# This rarely changes unless you run multiple logical traders.
+SENDER_SUB_ID = "4C001"
 
-# .......Trading user control
+# All your products are BUY-only (binary options). Keep True.
+SIDE_BUY = True
+
+# -------------------- TRADING USER CONTROL ------------------------
+# Which trading account to use (FIX tag 1 = Account).
+# Only ONE should be active at a time.
 ACCOUNT = "yesRonaldo"
 # ACCOUNT = "noRonaldo"
 # ACCOUNT = "noTippy"
 # ACCOUNT = "yesTippy"
 # ACCOUNT = "RPTEST"
 
-# .......Trading event control
-SYMBOL = "CBBTC_123125_132500"
-# SYMBOL = "CBBTC_123125_65000"
-# SYMBOL = "CBBTC_123125_142500"
+# ---------------- MULTI-SYMBOL LADDER (ladder_multi mode) ---------
+# These are all the strikes for Dec 31 2025 BTC binary options.
+# ladder_multi will cycle through ALL of these.
+SYMBOLS = [
+    "CBBTC_123125_42500",
+    "CBBTC_123125_45000",
+    "CBBTC_123125_52500",
+    "CBBTC_123125_55000",
+    "CBBTC_123125_62500",
+    "CBBTC_123125_65000",
+    "CBBTC_123125_72500",
+    "CBBTC_123125_75000",
+    "CBBTC_123125_82500",
+    "CBBTC_123125_85000",
+    "CBBTC_123125_92500",
+    "CBBTC_123125_95000",
+    "CBBTC_123125_102500",
+    "CBBTC_123125_105000",
+    "CBBTC_123125_112500",
+    "CBBTC_123125_115000",
+    "CBBTC_123125_122500",
+    "CBBTC_123125_125000",
+    "CBBTC_123125_132500",
+    "CBBTC_123125_135000",
+    "CBBTC_123125_142500",
+    "CBBTC_123125_145000",
+    "CBBTC_123125_152500",
+    "CBBTC_123125_155000",
+    "CBBTC_123125_162500",
+    "CBBTC_123125_165000",
+    "CBBTC_123125_175000",
+]
+
+# -------- SINGLE-SYMBOL CONTROL (all modes *except* ladder_multi) --
+# Modes: simplerepeat, layer, replace, ratchet, cancel
+# Only one of these should be selected at a time.
+# TIP: SYMBOLS[0] is just a safe default; override as needed.
+SYMBOL = SYMBOLS[0]
+SYMBOL = "CBBTC_123125_162500"
+# SYMBOL = "CBBTC_123125_165000"
+# SYMBOL = "CBBTC_123125_175000"
 # SYMBOL = "MNYCG_110425_Mamdani"
 
-# .......Trading instrument control
+# ---------------- INSTRUMENT CONTROL ------------------------------
+# Optional FIX tag 762 (SecuritySubType). Used by your venue.
 SecSubType   = "YES"
 # SecSubType = "NO"
 
-# .......Mode-independent numeric defaults (CLI can override per-mode later)
-PRICE        = 0.51
-QTY          = 1
+# -------------- NUMERIC DEFAULTS (used by MOST modes) --------------
+PRICE        = 0.51      # initial working price for new orders
+QTY          = 1         # quantity per order
 
-# .......Mode: simplerepeat, layer, replace and ratchet
-maxloop      = 10           # how many times my outer loop runs per mode - count - attempts
+# ------------ MODE: simplerepeat, layer, replace, ratchet ----------
+# maxloop = how many orders to send in those modes.
+maxloop      = 10
 
-# .......Mode: layer and replace
-scope        = 0.10             # total ladder range
-step         = 0.01             # ladder increment
+# ---------------- MODE: layer / replace parameters -----------------
+# scope defines the TOP of the layer range:
+#   layer prices: PRICE → PRICE+step → PRICE+step*2 ... → PRICE+step*N until within scope
+scope        = 0.01      # e.g. PRICE=0.51, step=0.01 => range to ~0.52
+step         = 0.01      # increment for laddering/replacement
 
-# .......Mode: ratchet - change the step to zero if you do not want to just send cancel/replace
-ratchet_repeats = 20             # number of replaces
-ratchet_pause_s = 0.0002         # seconds between replaces
+# ---------------- MODE: ratchet parameters -------------------------
+ratchet_repeats = 20        # number of cancel/replace cycles per symbol
+ratchet_pause_s = 0.0002    # delay between replaces (controls throughput)
 
-# --- Global FIX parameters ---
-# Time In Force constants (tag 59)
-tif  = fix.TimeInForce_DAY                  # Day
-# tif = fix.TimeInForce_GOOD_TILL_CANCEL    # GTC
-# tif = fix.TimeInForce_IMMEDIATE_OR_CANCEL # IOC
-# tif = fix.TimeInForce_FILL_OR_KILL        # FOK
-# tif = fix.TimeInForce_GOOD_TILL_DATE      # GTD (requires ExpireDate(432))
-# -------------------------------------------------------------------
+# ------------- PRICE QUANTIZATION + SAFETY LIMITS ------------------
+# PRICE_QUANTUM: smallest allowable tick size (0.01 = cents)
+PRICE_QUANTUM = 0.01
+
+# MAX_PRICE is a safety guard — ratchet logic must NEVER exceed this.
+MAX_PRICE = 0.99
+
+# When ladder_multi runs, this holds symbol → current ClOrdID
+ladder_state = {}
+
+# ----------------- GLOBAL FIX PARAMETERS ---------------------------
+# Time-In-Force (tag 59) for all new orders.
+tif  = fix.TimeInForce_DAY
+# tif = fix.TimeInForce_GOOD_TILL_CANCEL
+# tif = fix.TimeInForce_IMMEDIATE_OR_CANCEL
+# tif = fix.TimeInForce_FILL_OR_KILL
+# tif = fix.TimeInForce_GOOD_TILL_DATE      # requires tag 432 ExpireDate
 
 # .......the trackedorder variables keep track of all the orders going out so we can replace the value
 @dataclass
@@ -164,14 +231,14 @@ class App(fix.Application):
         # keep the last session_id so we can re-use on reconnect if needed to hold the logout...
     
     # this function makes the CTRL+C close cleanly because we never call onLogout due to it's requirement with QuickFIX
-    def logout_and_stop(self, init, wait_secs=5):        
+    def logout_and_stop(self, init, wait_secs=5):
         try:
-            if app.session_id:
-                sess = fix.Session.lookupSession(app.session_id)
+            if self.session_id:
+                sess = fix.Session.lookupSession(self.session_id)
                 if sess:
                     sess.logout("Client requested shutdown")
             t0 = time.time()
-            while app.logged_on and (time.time() - t0) < wait_secs:
+            while self.logged_on and (time.time() - t0) < wait_secs:
                 time.sleep(0.1)
         finally:
             try:
@@ -463,7 +530,94 @@ class App(fix.Application):
         if getattr(o, "qty", None):
             msg.setField(fix.OrderQty(float(o.qty)))   # 38
 
-        return msg, new_cl
+        return msg, new_cl    
+
+def build_symbol_ladder(app, symbols, qty, account, secsubtype,
+                        side_buy=True, base_px=None):
+
+    # Send one limit order per symbol and remember the last ClOrdID per symbol.
+    # Returns: dict {symbol: clordid}
+
+    ladder_state = {}
+
+    for sym in symbols:
+        px = price_for_symbol(sym, base_px=base_px)
+        cl = app.send_limit(
+            symbol=sym,
+            buy=side_buy,
+            qty=qty,
+            price=px,
+            sec_subtype=secsubtype,
+            account=account,
+        )
+
+        print(f"[LADDER] {sym}: sent NEW order {cl} @ {px}")
+        ladder_state[sym] = cl
+
+        # optional: wait for NEW ack per order (ExecType=0)
+        ev = app.wait_for_exec(cl, want_exec_types=("0",), timeout=1.0)
+        if ev is None:
+            print(f"[WARN] No NEW ack for {sym} / {cl} within 1s")
+
+    return ladder_state
+
+def ratchet_ladder(app, ladder_state, step, repeats, price_quantum="0.01"):
+    # For each symbol in ladder_state, repeatedly replace the order price
+    # in a band [PRICE .. (PRICE + step + scope)], then jump back to PRICE.
+    # Never exceed MAX_PRICE (for error control).
+    # Uses globals: PRICE, scope, MAX_PRICE.    
+    base      = Decimal(str(PRICE))        # 0.51
+    step_dec  = Decimal(str(step))         # 0.01
+    scope_dec = Decimal(str(scope))        # e.g. 0.09
+    max_dec   = Decimal(str(MAX_PRICE))    # 0.99
+
+    low  = base
+    high = base + step_dec + scope_dec     # e.g. 0.51 + 0.01 + 0.09 = 0.61
+
+    for r in range(repeats):
+        print(f"[RATCHET] pass {r+1}/{repeats}")
+
+        for sym, current_cl in list(ladder_state.items()):
+            order = app.tracker.get_by_last_clordid(current_cl)
+            if order is None:
+                print(f"[SKIP] {sym}: no order found for {current_cl}")
+                continue
+
+            # Use tracked price or fall back to global PRICE
+            old_px = order.price if getattr(order, "price", None) is not None else PRICE
+            cur = Decimal(str(old_px))
+
+            # --- PRICE -> PRICE+step -> ... -> HIGH -> PRICE -> ... ---
+            if cur >= high:
+                new_dec = low
+            else:
+                new_dec = cur + step_dec
+                if new_dec > high:
+                    new_dec = high
+
+            # Safety cap
+            if new_dec > max_dec:
+                new_dec = max_dec
+
+            # Optional: snap to quantum (e.g. cents)
+            if price_quantum:
+                q = Decimal(price_quantum)
+                new_dec = (new_dec / q).quantize(Decimal("1")) * q
+
+            new_px = float(new_dec)
+
+            new_cl = app.send_replace(current_cl, new_price=new_px)
+            if not new_cl:
+                print(f"[WARN] Replace send failed for {sym} at {new_px}")
+                continue
+
+            ladder_state[sym] = new_cl
+            print(f"[RATCHET] {sym}: {current_cl} -> {new_cl} @ {new_px:.2f}")
+
+            # Optional: wait for REPLACE ack, but don't fail hard if missing
+            ev = app.wait_for_exec(new_cl, want_exec_types=("5",), timeout=1.0)
+            if ev is None:
+                print(f"[WARN] No REPLACE ack for {sym} / {new_cl} within 1s")
 
 def main(cfg, trademode):
     settings = fix.SessionSettings(cfg)   
@@ -632,19 +786,32 @@ def main(cfg, trademode):
             # 2) Wait briefly for NEW ack (ExecutionReport 35=8 / 150=0)
             app.wait_for_exec(cl, want_exec_types=("0",), timeout=1.0)
 
-            current_cl = cl
-            replaces_ok = 0
-            for k in range(ratchet_repeats):
-                # compute next price; you can choose linear or oscillating
-                next_px = base_px + (k + 1) * step
+            LOW  = Decimal("0.51")
+            HIGH = Decimal("0.61")
+            MAX  = Decimal("1.00")
+            STEP = Decimal(str(step))
 
-                # (optional) verify the order is live before each replace
+            for k in range(ratchet_repeats):
                 o = app.tracker.get_by_last_clordid(current_cl)
-                if not o or not o.live:
-                    print(f"[ratchet] stop: order not live (cl={current_cl}) at step {k}")
+                if not o:
+                    print(f"[ratchet] stop: order not found (cl={current_cl}) at step {k}")
                     break
 
-                # 3) Send REPLACE (35=G) and wait for REPLACE ack (150=5)
+                old_px = o.price if getattr(o, "price", None) is not None else PRICE
+                cur = Decimal(str(old_px))
+
+                if cur >= HIGH:
+                    new_dec = LOW
+                else:
+                    new_dec = cur + STEP
+                    if new_dec > HIGH:
+                        new_dec = HIGH
+
+                if new_dec > MAX:
+                    new_dec = MAX
+
+                next_px = float(new_dec)
+
                 new_cl = app.send_replace(current_cl, new_price=next_px)
                 if not new_cl:
                     print(f"[ratchet] replace send failed at step {k}")
@@ -653,15 +820,37 @@ def main(cfg, trademode):
                 ev = app.wait_for_exec(new_cl, want_exec_types=("5",), timeout=1.0)
                 if ev is None:
                     print(f"[ratchet] no replace ACK within timeout at step {k} (cl={new_cl})")
-                    # you can continue or break; continuing keeps pressure on the gateway
-                    # break
-                else:
-                    replaces_ok += 1
 
                 current_cl = new_cl
-                time.sleep(ratchet_pause_s)
+                time.sleep(ratchet_pause_s)            
 
             print(f"[ratchet] done: replaces_ok={replaces_ok}/{ratchet_repeats}")
+        
+        elif trademode == "ladder_multi":
+            print("[MODE] ladder_multi: one order per symbol, then ratchet each")
+
+            # 1) build the initial ladder: ALL start at PRICE (0.51), not the strike
+            ladder_state = build_symbol_ladder(
+                app=app,
+                symbols=SYMBOLS,
+                qty=QTY,
+                account=ACCOUNT,
+                secsubtype=SecSubType,
+                side_buy=SIDE_BUY,
+                base_px=PRICE,     # <<< force initial price = 0.51
+            )
+
+            # 2) replace/ratchet each symbol’s order N times
+            ratchet_ladder(
+                app=app,
+                ladder_state=ladder_state,
+                step=step,              # how far to move price on each replace
+                repeats=ratchet_repeats,
+                price_quantum=PRICE_QUANTUM,
+            )
+
+            print("[MODE] ladder_multi done")
+
 
         # --- main logical main loop end ---
 
@@ -706,15 +895,21 @@ if __name__ == "__main__":
         print("Usage: python3 MasterSendOrders.RPVersion.py <initiator.cfg> <simplerepeat|layer|replace>")
         sys.exit(1)
 
+    print("Usage: python3 MasterSendOrders.RPVersion.py <initiator.cfg> "
+              "<simplerepeat|layer|replace|ratchet|cancel|ladder_multi>")
+
     cfg = sys.argv[1]
     trademode = sys.argv[2].lower().strip()   
 
-    if trademode not in {"simplerepeat", "layer", "replace", "ratchet", "cancel"}:
+    if trademode not in {"simplerepeat", "layer", "replace", "ratchet", "cancel", "ladder_multi"}:
         print(f"Unknown mode: {trademode}")
         sys.exit(2)
 
-    print(f"[CONFIG] mode={trademode} symbol={SYMBOL} acct={ACCOUNT} subid={SENDER_SUB_ID} "
-        f"price={PRICE} qty={QTY} secsub={SecSubType}")
+
+    print(f"[CONFIG] mode={trademode} symbol={SYMBOL} "
+      f"(multi={len(SYMBOLS)} strikes) "
+      f"acct={ACCOUNT} subid={SENDER_SUB_ID} price={PRICE} qty={QTY} secsub={SecSubType}")
+
     input("Pause check above then hit enter")
 
     # make visible to main it sees the global values
