@@ -39,10 +39,10 @@ rplog_file = rpdir / "logs" / "rpapp.log"
 
 # arguments:
 SENDER_SUB_ID  = "4C001"
-# ACCOUNT = "yesRonaldo"
+ACCOUNT = "yesRonaldo"
 # ACCOUNT = "noRonaldo"
 # ACCOUNT = "noTippy"
-ACCOUNT = "yesTippy"
+# ACCOUNT = "yesTippy"
 # ACCOUNT = "RPTEST"
 # SYMBOL = "CBBTC_123125_65000"
 # SYMBOL = "CBBTC_123125_142500"
